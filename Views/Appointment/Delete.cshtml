@@ -1,0 +1,135 @@
+@model HastaneRandevuSistemi.Models.Appointment
+
+@{
+    ViewData["Title"] = "Randevu Sil";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4><i class="fas fa-exclamation-triangle"></i> Randevu Sil</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <h5><i class="fas fa-warning"></i> Dikkat!</h5>
+                    <p>Bu işlem geri alınamaz. Randevu silindiğinde:</p>
+                    <ul>
+                        <li>Randevu tamamen silinecek</li>
+                        <li>Bu işlem geri alınamaz</li>
+                        <li>Doktor ve hasta bilgileri etkilenmeyecek</li>
+                    </ul>
+                </div>
+                
+                <h5>Silinecek Randevu Bilgileri:</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Doktor:</strong> @Model.Doctor?.FullName</p>
+                        <p><strong>Branş:</strong> @Model.Doctor?.Specialization?.Name</p>
+                        <p><strong>Hasta:</strong> @Model.Patient?.FullName</p>
+                        <p><strong>Hasta E-posta:</strong> @Model.Patient?.Email</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Tarih:</strong> @Model.AppointmentDate.ToString("dd.MM.yyyy dddd")</p>
+                        <p><strong>Saat:</strong> @Model.AppointmentTime.ToString(@"hh\:mm")</p>
+                        <p><strong>Durum:</strong> 
+                            @switch (Model.Status)
+                            {
+                                case HastaneRandevuSistemi.Models.AppointmentStatus.Scheduled:
+                                    <span class="badge bg-warning">Planlandı</span>
+                                    break;
+                                case HastaneRandevuSistemi.Models.AppointmentStatus.Confirmed:
+                                    <span class="badge bg-info">Onaylandı</span>
+                                    break;
+                                case HastaneRandevuSistemi.Models.AppointmentStatus.Completed:
+                                    <span class="badge bg-success">Tamamlandı</span>
+                                    break;
+                                case HastaneRandevuSistemi.Models.AppointmentStatus.Cancelled:
+                                    <span class="badge bg-danger">İptal Edildi</span>
+                                    break;
+                                case HastaneRandevuSistemi.Models.AppointmentStatus.NoShow:
+                                    <span class="badge bg-secondary">Gelmedi</span>
+                                    break;
+                            }
+                        </p>
+                        <p><strong>Oluşturulma:</strong> @Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")</p>
+                    </div>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.Notes))
+                {
+                    <hr>
+                    <p><strong>Notlar:</strong></p>
+                    <div class="alert alert-light">
+                        <p class="mb-0">@Model.Notes</p>
+                    </div>
+                }
+                
+                <form asp-action="Delete" class="mt-4">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Evet, Sil
+                        </button>
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">
+                            <i class="fas fa-eye"></i> Detaylar
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> İptal
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Bilgi</h5>
+            </div>
+            <div class="card-body">
+                <p>Randevu silme işlemi:</p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-times text-danger"></i> Hard delete yapılır</li>
+                    <li><i class="fas fa-times text-danger"></i> Veriler kalıcı olarak silinir</li>
+                    <li><i class="fas fa-times text-danger"></i> Geri alınamaz</li>
+                </ul>
+                <hr>
+                <p class="text-muted">
+                    <small><strong>Alternatif:</strong> Randevuyu silmek yerine durumunu "İptal Edildi" olarak değiştirebilirsiniz.</small>
+                </p>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-clock"></i> Randevu Zamanı</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Tam Tarih:</strong> @Model.FullAppointmentDateTime.ToString("dd.MM.yyyy HH:mm")</p>
+                <p><strong>Kalan Süre:</strong> 
+                    @{
+                        var timeDiff = Model.FullAppointmentDateTime - DateTime.Now;
+                        if (timeDiff.TotalDays > 0)
+                        {
+                            <span class="text-info">@((int)timeDiff.TotalDays) gün</span>
+                        }
+                        else if (timeDiff.TotalHours > 0)
+                        {
+                            <span class="text-warning">@((int)timeDiff.TotalHours) saat</span>
+                        }
+                        else if (timeDiff.TotalMinutes > 0)
+                        {
+                            <span class="text-danger">@((int)timeDiff.TotalMinutes) dakika</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Geçmiş</span>
+                        }
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

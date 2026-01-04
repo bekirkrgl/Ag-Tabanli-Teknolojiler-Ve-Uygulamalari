@@ -1,0 +1,208 @@
+@model IEnumerable<HastaneRandevuSistemi.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Randevular";
+}
+
+<style>
+.appointment-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 16px;
+}
+.appointment-table thead {
+    background: #667eea;
+    color: white;
+    font-size: 18px;
+}
+.appointment-table th,
+.appointment-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+.appointment-table tr:nth-child(even) {
+    background: #f8f9fa;
+}
+.appointment-table tr:hover {
+    background: #e9ecef;
+}
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+.page-header {
+    padding: 20px 0;
+    border-bottom: 2px solid #667eea;
+    margin-bottom: 20px;
+}
+h2 {
+    font-size: 28px;
+}
+.btn {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+.alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+}
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+</style>
+
+<div class="container" style="max-width: 100%; padding: 20px;">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="margin: 0; color: #2d3748;"><i class="fas fa-calendar-alt me-2"></i>Randevular</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Yeni Randevu
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success" style="margin-top: 20px;">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" style="margin-top: 20px;">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="alert" style="background-color: #e3f2fd; border-color: #90caf9; color: #1565c0; margin-top: 20px; margin-bottom: 20px;">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>💡 Doktor Giriş Bilgileri:</strong> Randevu aldığınız doktorun hesabına giriş yapmak için, tabloda görünen doktor email adresini kullanın. Tüm doktor hesapları için şifre: <strong>Doktor123!</strong>
+        <br><small style="margin-top: 5px; display: block;">Test Doktor hesabı: <strong>doktor@test.com</strong> / Şifre: <strong>Doktor123!</strong></small>
+    </div>
+
+    @if (Model.Any())
+    {
+        <table class="appointment-table">
+            <thead>
+                <tr>
+                    <th style="width: 30px;">#</th>
+                    <th style="width: 250px;">Doktor</th>
+                    <th style="width: 180px;">Hasta</th>
+                    <th style="width: 90px;">Tarih</th>
+                    <th style="width: 70px;">Saat</th>
+                    <th style="width: 95px;">Durum</th>
+                    <th style="width: 110px;">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{int counter = 1;}
+                @foreach (var appointment in Model)
+                {
+                    <tr>
+                        <td>@counter</td>
+                        <td>
+                            <strong>@appointment.Doctor?.FullName</strong><br>
+                            <small style="color: #718096;">@appointment.Doctor?.Specialization?.Name</small><br>
+                            <small style="color: #667eea; font-weight: 600; margin-top: 5px; display: block;">
+                                <i class="fas fa-envelope"></i> @appointment.Doctor?.Email
+                            </small>
+                            <small style="color: #28a745; font-size: 11px; margin-top: 3px; display: block;">
+                                <i class="fas fa-info-circle"></i> Doktor Girişi: <strong>@appointment.Doctor?.Email</strong> / Şifre: <strong>Doktor123!</strong>
+                            </small>
+                        </td>
+                        <td>
+                            @appointment.Patient?.FullName<br>
+                            <small style="color: #718096;">@appointment.Patient?.Email</small>
+                        </td>
+                        <td>@appointment.AppointmentDate.ToString("dd.MM.yyyy")</td>
+                        <td>@appointment.AppointmentTime.ToString(@"hh\:mm")</td>
+                        <td>
+                            @{
+                                var statusText = "";
+                                var statusColor = "";
+                                var statusIcon = "";
+                                switch(appointment.Status.ToString())
+                                {
+                                    case "Scheduled":
+                                        statusText = "⏳ Planlandı";
+                                        statusIcon = appointment.IsConfirmed ? "✅" : "⏳";
+                                        statusText = appointment.IsConfirmed ? "✅ Onaylandı (Bekliyor)" : "⏳ Planlandı (Bekliyor)";
+                                        statusColor = appointment.IsConfirmed ? "#28a745" : "#ffc107";
+                                        break;
+                                    case "Confirmed":
+                                        statusText = "✅ Onaylandı";
+                                        statusIcon = "✅";
+                                        statusColor = "#28a745";
+                                        break;
+                                    case "Completed":
+                                        statusText = "✅ Tamamlandı";
+                                        statusIcon = "✅";
+                                        statusColor = "#17a2b8";
+                                        break;
+                                    case "Cancelled":
+                                        statusText = "❌ İptal Edildi";
+                                        statusIcon = "❌";
+                                        statusColor = "#dc3545";
+                                        break;
+                                    case "NoShow":
+                                        statusText = "⚠️ Gelmedi";
+                                        statusIcon = "⚠️";
+                                        statusColor = "#ff9800";
+                                        break;
+                                    default:
+                                        statusText = appointment.Status.ToString();
+                                        statusIcon = "❓";
+                                        statusColor = "#6c757d";
+                                        break;
+                                }
+                            }
+                            <span class="badge" style="background: @statusColor; color: white; padding: 5px 10px; border-radius: 4px; font-size: 13px; white-space: nowrap; font-weight: 600;">
+                                @statusIcon @statusText
+                            </span>
+                            @if (appointment.IsConfirmed && appointment.Status.ToString() == "Scheduled")
+                            {
+                                <br><small style="color: #28a745; font-size: 11px; margin-top: 3px; display: block;">
+                                    <i class="fas fa-check-circle"></i> Doktor tarafından onaylandı
+                                </small>
+                            }
+                        </td>
+                        <td style="white-space: nowrap;">
+                            <a asp-action="Details" asp-route-id="@appointment.Id" title="Detaylar" style="padding: 6px 10px; background: #17a2b8; color: white; border-radius: 5px; text-decoration: none; display: inline-block; font-size: 15px;">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@appointment.Id" title="Düzenle" style="padding: 6px 10px; background: #ffc107; color: white; border-radius: 5px; text-decoration: none; display: inline-block; margin: 0 3px; font-size: 15px;">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@appointment.Id" title="Sil" onclick="return confirm('Randevuyu silmek istediğinizden emin misiniz?')" style="padding: 6px 10px; background: #dc3545; color: white; border-radius: 5px; text-decoration: none; display: inline-block; font-size: 15px;">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    counter++;
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div style="text-align: center; padding: 50px 20px; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+            <i class="fas fa-calendar-times fa-3x" style="color: #ccc; margin-bottom: 15px;"></i>
+            <h5>Henüz randevu bulunmamaktadır</h5>
+            <a asp-action="Create" class="btn btn-primary mt-3">
+                <i class="fas fa-plus me-2"></i>Yeni Randevu Oluştur
+            </a>
+        </div>
+    }
+</div>

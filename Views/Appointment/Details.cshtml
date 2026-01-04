@@ -1,0 +1,371 @@
+@model HastaneRandevuSistemi.Models.Appointment
+
+@{
+    ViewData["Title"] = "Randevu Detayları";
+}
+
+<style>
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px 0;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.details-container {
+    padding: 20px 0;
+    min-height: 60vh;
+}
+
+.info-card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.info-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.info-card:hover::before {
+    opacity: 1;
+}
+
+.info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+.card-icon.patient {
+    background: linear-gradient(135deg, #4299e1, #63b3ed);
+}
+
+.card-icon.doctor {
+    background: linear-gradient(135deg, #48bb78, #68d391);
+}
+
+.card-icon.appointment {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f7fafc;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.info-item i {
+    color: #667eea;
+    width: 20px;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.info-item strong {
+    color: #4a5568;
+    min-width: 120px;
+    margin-right: 8px;
+}
+
+.info-item span {
+    color: #2d3748;
+    font-weight: 500;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.status-scheduled {
+    background: linear-gradient(135deg, #4299e1, #63b3ed);
+    color: white;
+}
+
+.status-confirmed {
+    background: linear-gradient(135deg, #48bb78, #68d391);
+    color: white;
+}
+
+.status-completed {
+    background: linear-gradient(135deg, #38a169, #48bb78);
+    color: white;
+}
+
+.status-cancelled {
+    background: linear-gradient(135deg, #f56565, #fc8181);
+    color: white;
+}
+
+.btn-modern {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary-modern {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-outline-modern {
+    background: transparent;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.btn-outline-modern:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.btn-warning-modern {
+    background: linear-gradient(135deg, #ed8936, #f6ad55);
+    color: white;
+    box-shadow: 0 4px 15px rgba(237, 137, 54, 0.3);
+}
+
+.btn-warning-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(237, 137, 54, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+@@media (max-width: 768px) {
+    .page-header {
+        padding: 30px 0;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .info-card {
+        padding: 1rem;
+    }
+    
+    .card-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+    
+    .btn-modern {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+    }
+}
+</style>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div class="container">
+        <h1 class="page-title">📅 Randevu Detayları</h1>
+        <p class="page-subtitle">Randevu bilgilerinizi detaylı olarak görüntüleyin</p>
+    </div>
+</div>
+
+<div class="container details-container">
+    <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="info-card">
+                <div class="card-icon patient">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h5 class="mb-3" style="color: #2d3748; font-weight: 600;">👤 Hasta Bilgileri</h5>
+                <div class="info-item">
+                    <i class="fas fa-user"></i>
+                    <strong>Ad Soyad:</strong>
+                    <span>@Model.Patient?.FullName</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <strong>E-posta:</strong>
+                    <span>@Model.Patient?.Email</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <strong>Telefon:</strong>
+                    <span>@Model.Patient?.PhoneNumber</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-id-card"></i>
+                    <strong>TC Kimlik:</strong>
+                    <span>@Model.Patient?.TcNumber</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="info-card">
+                <div class="card-icon doctor">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <h5 class="mb-3" style="color: #2d3748; font-weight: 600;">👨‍⚕️ Doktor Bilgileri</h5>
+                <div class="info-item">
+                    <i class="fas fa-user-md"></i>
+                    <strong>Ad Soyad:</strong>
+                    <span>@Model.Doctor?.FullName</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-stethoscope"></i>
+                    <strong>Branş:</strong>
+                    <span>@Model.Doctor?.Specialization?.Name</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <strong>E-posta:</strong>
+                    <span>@Model.Doctor?.Email</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <strong>Telefon:</strong>
+                    <span>@Model.Doctor?.PhoneNumber</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-12 mb-4">
+            <div class="info-card">
+                <div class="card-icon appointment">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h5 class="mb-3" style="color: #2d3748; font-weight: 600;">📅 Randevu Bilgileri</h5>
+                <div class="info-item">
+                    <i class="fas fa-calendar"></i>
+                    <strong>Tarih:</strong>
+                    <span>@Model.AppointmentDate.ToString("dd MMMM yyyy")</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <strong>Saat:</strong>
+                    <span>@Model.AppointmentTime.ToString(@"hh\:mm")</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Durum:</strong>
+                    <span class="status-badge status-@(Model.Status.ToString().ToLower())">
+                        @switch(Model.Status.ToString())
+                        {
+                            case "Scheduled":
+                                <text>⏳ Planlandı</text>
+                                break;
+                            case "Confirmed":
+                                <text>✅ Onaylandı</text>
+                                break;
+                            case "Completed":
+                                <text>✅ Tamamlandı</text>
+                                break;
+                            case "Cancelled":
+                                <text>❌ İptal Edildi</text>
+                                break;
+                            case "NoShow":
+                                <text>🚫 Gelmedi</text>
+                                break;
+                            default:
+                                <text>@Model.Status</text>
+                                break;
+                        }
+                    </span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <strong>Oluşturulma:</strong>
+                    <span>@Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")</span>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Notes))
+                {
+                    <div class="info-item">
+                        <i class="fas fa-sticky-note"></i>
+                        <strong>Notlar:</strong>
+                        <span>@Model.Notes</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-modern btn-warning-modern me-3">
+            <i class="fas fa-edit"></i>
+            ✏️ Düzenle
+        </a>
+        <a asp-action="Index" class="btn-modern btn-outline-modern">
+            <i class="fas fa-arrow-left"></i>
+            ← Geri Dön
+        </a>
+    </div>
+</div>

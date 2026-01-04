@@ -1,0 +1,160 @@
+@model HastaneRandevuSistemi.Models.AvailabilityBlock
+
+@{
+    ViewData["Title"] = "Müsaitlik Bloğu Düzenle";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h4><i class="fas fa-edit"></i> Müsaitlik Bloğu Düzenle</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="CreatedDate" />
+                    
+                    <div class="mb-3">
+                        <label asp-for="DoctorId" class="form-label"></label>
+                        <select asp-for="DoctorId" class="form-select" asp-items="ViewBag.DoctorId">
+                            <option value="">Doktor seçiniz</option>
+                        </select>
+                        <span asp-validation-for="DoctorId" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="StartDateTime" class="form-label"></label>
+                                <input asp-for="StartDateTime" class="form-control" type="datetime-local" />
+                                <span asp-validation-for="StartDateTime" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="EndDateTime" class="form-label"></label>
+                                <input asp-for="EndDateTime" class="form-control" type="datetime-local" />
+                                <span asp-validation-for="EndDateTime" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="Müsaitlik bloğu açıklaması (opsiyonel)"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                        <label asp-for="IsActive" class="form-check-label"></label>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-save"></i> Güncelle
+                        </button>
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">
+                            <i class="fas fa-eye"></i> Detaylar
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> İptal
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Bilgi</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Doktor:</strong> @Model.Doctor?.FullName</p>
+                <p><strong>Mevcut Başlangıç:</strong> @Model.StartDateTime.ToString("dd.MM.yyyy HH:mm")</p>
+                <p><strong>Mevcut Bitiş:</strong> @Model.EndDateTime.ToString("dd.MM.yyyy HH:mm")</p>
+                <p><strong>Durum:</strong> 
+                    <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary")">
+                        @(Model.IsActive ? "Aktif" : "Pasif")
+                    </span>
+                </p>
+                <p><strong>Oluşturulma:</strong> @Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")</p>
+                <hr>
+                <p>Müsaitlik bloğu düzenlerken:</p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success"></i> Tüm alanları kontrol edin</li>
+                    <li><i class="fas fa-check text-success"></i> Bitiş tarihi başlangıç tarihinden sonra olmalı</li>
+                    <li><i class="fas fa-check text-success"></i> Durum değişikliklerini kaydedin</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-clock"></i> Süre Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                @{
+                    var duration = Model.EndDateTime - Model.StartDateTime;
+                }
+                <p><strong>Mevcut Süre:</strong> 
+                    @if (duration.TotalDays >= 1)
+                    {
+                        <span class="badge bg-info">@((int)duration.TotalDays) gün</span>
+                    }
+                    else if (duration.TotalHours >= 1)
+                    {
+                        <span class="badge bg-warning">@((int)duration.TotalHours) saat</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">@((int)duration.TotalMinutes) dakika</span>
+                    }
+                </p>
+                <p><strong>Geçerlilik:</strong> 
+                    @if (Model.EndDateTime < DateTime.Now)
+                    {
+                        <span class="text-muted">Süresi dolmuş</span>
+                    }
+                    else if (Model.StartDateTime > DateTime.Now)
+                    {
+                        <span class="text-info">Gelecekte başlayacak</span>
+                    }
+                    else
+                    {
+                        <span class="text-warning">Şu anda aktif</span>
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Bitiş tarihi başlangıç tarihinden sonra olmalı kontrolü
+            $('#StartDateTime, #EndDateTime').on('change', function() {
+                var startDateTime = $('#StartDateTime').val();
+                var endDateTime = $('#EndDateTime').val();
+                
+                if (startDateTime && endDateTime) {
+                    var startDate = new Date(startDateTime);
+                    var endDate = new Date(endDateTime);
+                    
+                    if (startDate >= endDate) {
+                        $('#EndDateTime')[0].setCustomValidity('Bitiş tarihi başlangıç tarihinden sonra olmalıdır');
+                    } else {
+                        $('#EndDateTime')[0].setCustomValidity('');
+                    }
+                }
+            });
+        });
+    </script>
+}

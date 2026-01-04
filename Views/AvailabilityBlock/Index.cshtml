@@ -1,0 +1,366 @@
+@model IEnumerable<HastaneRandevuSistemi.Models.AvailabilityBlock>
+
+@{
+    ViewData["Title"] = "Müsaitlik Blokları";
+    var doctor = ViewBag.Doctor as HastaneRandevuSistemi.Models.Doctor;
+}
+
+<style>
+/* MODERN MÜSAİTLİK BLOKLARI SAYFASI CSS */
+.availability-block-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    height: 100%;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.availability-block-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.availability-block-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+}
+
+.doctor-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.doctor-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem;
+    font-size: 2rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.doctor-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.doctor-details h4 {
+    margin: 0 0 0.5rem 0;
+    color: #2d3748;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.doctor-specialization {
+    color: #667eea;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.doctor-email {
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+.block-info {
+    background: #fff5f5;
+    border: 2px solid #fed7d7;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.block-dates {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.date-item {
+    text-align: center;
+    flex: 1;
+}
+
+.date-label {
+    font-size: 0.9rem;
+    color: #718096;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.date-value {
+    font-size: 1.1rem;
+    color: #2d3748;
+    font-weight: 700;
+}
+
+.time-value {
+    font-size: 1rem;
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.block-reason {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    border-left: 4px solid #dc3545;
+}
+
+.reason-title {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.reason-text {
+    color: #4a5568;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-inactive {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.section-title {
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #2d3748;
+}
+
+.section-subtitle {
+    font-size: 1.25rem;
+    text-align: center;
+    color: #718096;
+    margin-bottom: 4rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn-modern {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.btn-primary-modern {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.btn-outline-modern {
+    background: transparent;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.btn-outline-modern:hover {
+    background: #667eea;
+    color: white;
+}
+
+.btn-danger-modern {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+}
+
+.btn-warning-modern {
+    background: linear-gradient(135deg, #ffc107, #ffb300);
+    color: #212529;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.empty-icon {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    font-size: 3rem;
+    color: white;
+}
+
+@@media (max-width: 768px) {
+    .section-title {
+        font-size: 2.5rem;
+    }
+    
+    .availability-block-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .doctor-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .doctor-avatar {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .block-dates {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+</style>
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="section-title text-gradient mb-0">
+            <i class="fas fa-ban me-3"></i>
+            @(doctor != null ? $"{doctor.FullName} - Müsaitlik Blokları" : "Müsaitlik Blokları")
+        </h2>
+        <a asp-action="Create" class="btn-modern btn-primary-modern">
+            <i class="fas fa-plus"></i> Yeni Blok Ekle
+        </a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var block in Model)
+            {
+                <div class="col-lg-6">
+                    <div class="availability-block-card">
+                        <div class="doctor-info">
+                            <div class="doctor-avatar">
+                                @if (!string.IsNullOrEmpty(block.Doctor.PhotoUrl))
+                                {
+                                    <img src="@block.Doctor.PhotoUrl" alt="@block.Doctor.FullName" />
+                                }
+                                else
+                                {
+                                    <i class="fas fa-user-md"></i>
+                                }
+                            </div>
+                            <div class="doctor-details">
+                                <h4>@block.Doctor.FullName</h4>
+                                <p class="doctor-specialization">@block.Doctor.Specialization?.Name</p>
+                                <p class="doctor-email">@block.Doctor.Email</p>
+                            </div>
+                        </div>
+                        
+                        <div class="block-info">
+                            <div class="block-dates">
+                                <div class="date-item">
+                                    <div class="date-label">Başlangıç</div>
+                                    <div class="date-value">@block.StartDateTime.ToString("dd MMMM yyyy")</div>
+                                    <div class="time-value">@block.StartDateTime.ToString("HH:mm")</div>
+                                </div>
+                                <div class="date-item">
+                                    <div class="date-label">Bitiş</div>
+                                    <div class="date-value">@block.EndDateTime.ToString("dd MMMM yyyy")</div>
+                                    <div class="time-value">@block.EndDateTime.ToString("HH:mm")</div>
+                                </div>
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(block.Reason))
+                            {
+                                <div class="block-reason">
+                                    <div class="reason-title">Sebep</div>
+                                    <p class="reason-text">@block.Reason</p>
+                                </div>
+                            }
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="status-badge @(block.IsActive ? "status-active" : "status-inactive")">
+                                @(block.IsActive ? "Aktif" : "Pasif")
+                            </span>
+                            
+                            <div class="d-flex gap-2">
+                                <a asp-action="Edit" asp-route-id="@block.Id" class="btn-modern btn-warning-modern">
+                                    <i class="fas fa-edit"></i> Düzenle
+                                </a>
+                                <a asp-action="Details" asp-route-id="@block.Id" class="btn-modern btn-outline-modern">
+                                    <i class="fas fa-eye"></i> Detay
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-ban"></i>
+            </div>
+            <h3 class="mt-3">Henüz müsaitlik bloğu bulunmamaktadır</h3>
+            <p class="text-muted">Doktorlar için müsaitlik blokları ekleyerek başlayabilirsiniz.</p>
+            <a asp-action="Create" class="btn-modern btn-primary-modern mt-4">
+                <i class="fas fa-plus"></i> İlk Bloğu Ekle
+            </a>
+        </div>
+    }
+</div>

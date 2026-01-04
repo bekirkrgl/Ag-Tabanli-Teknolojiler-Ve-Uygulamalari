@@ -1,0 +1,99 @@
+@model HastaneRandevuSistemi.Models.WorkingHour
+
+@{
+    ViewData["Title"] = "Çalışma Saati Sil";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4><i class="fas fa-exclamation-triangle"></i> Çalışma Saati Sil</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <h5><i class="fas fa-warning"></i> Dikkat!</h5>
+                    <p>Bu işlem geri alınamaz. Çalışma saati silindiğinde:</p>
+                    <ul>
+                        <li>Çalışma saati pasif duruma getirilecek</li>
+                        <li>Mevcut randevular etkilenmeyecek</li>
+                        <li>Doktor bilgileri korunacak</li>
+                    </ul>
+                </div>
+                
+                <h5>Silinecek Çalışma Saati Bilgileri:</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Doktor:</strong> @Model.Doctor?.FullName</p>
+                        <p><strong>Branş:</strong> @Model.Doctor?.Specialization?.Name</p>
+                        <p><strong>Gün:</strong> @Model.DayOfWeek.ToString()</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Başlangıç Saati:</strong> @Model.StartTime.ToString(@"hh\:mm")</p>
+                        <p><strong>Bitiş Saati:</strong> @Model.EndTime.ToString(@"hh\:mm")</p>
+                        <p><strong>Durum:</strong> 
+                            <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary")">
+                                @(Model.IsActive ? "Aktif" : "Pasif")
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle"></i> Çalışma Süresi</h6>
+                    <p><strong>Toplam Süre:</strong> @((Model.EndTime - Model.StartTime).TotalHours) saat</p>
+                    <p><strong>Çalışma Aralığı:</strong> @Model.StartTime.ToString(@"hh\:mm") - @Model.EndTime.ToString(@"hh\:mm")</p>
+                </div>
+                
+                <form asp-action="Delete" class="mt-4">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Evet, Sil
+                        </button>
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">
+                            <i class="fas fa-eye"></i> Detaylar
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> İptal
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Bilgi</h5>
+            </div>
+            <div class="card-body">
+                <p>Çalışma saati silme işlemi:</p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success"></i> Soft delete yapılır</li>
+                    <li><i class="fas fa-check text-success"></i> Veriler korunur</li>
+                    <li><i class="fas fa-check text-success"></i> Geri alınabilir</li>
+                </ul>
+                <hr>
+                <p class="text-muted">
+                    <small>Eğer bu çalışma saatinde aktif randevular varsa, önce bunları kontrol etmeniz önerilir.</small>
+                </p>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-user-md"></i> Doktor Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Ad Soyad:</strong> @Model.Doctor?.FullName</p>
+                <p><strong>Branş:</strong> @Model.Doctor?.Specialization?.Name</p>
+                <p><strong>E-posta:</strong> @Model.Doctor?.Email</p>
+                <p><strong>Telefon:</strong> @Model.Doctor?.PhoneNumber</p>
+            </div>
+        </div>
+    </div>
+</div>

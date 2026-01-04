@@ -1,0 +1,63 @@
+@model HastaneRandevuSistemi.Models.Patient
+
+@{
+    ViewData["Title"] = "Hasta Detayları";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-info text-white text-center py-4">
+                    <h2 class="mb-0">
+                        <i class="fas fa-user me-3"></i>
+                        Hasta Detayları
+                    </h2>
+                </div>
+                <div class="card-body p-5">
+                    <div class="row g-4">
+                        <div class="col-md-4 text-center">
+                            <div class="bg-info rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
+                                <i class="fas fa-user text-white" style="font-size: 4rem;"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <h4 class="text-primary mb-3">@Model.FullName</h4>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong><i class="fas fa-id-card me-2"></i>TC Kimlik No:</strong> @Model.TcNumber</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong><i class="fas fa-envelope me-2"></i>E-posta:</strong> @Model.Email</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong><i class="fas fa-phone me-2"></i>Telefon:</strong> @Model.PhoneNumber</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-2"><strong><i class="fas fa-birthday-cake me-2"></i>Doğum Tarihi:</strong> 
+                                        @(Model.BirthDate?.ToString("dd.MM.yyyy") ?? "Belirtilmemiş")
+                                    </p>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.Address))
+                                {
+                                    <div class="col-12">
+                                        <p class="mb-2"><strong><i class="fas fa-map-marker-alt me-2"></i>Adres:</strong> @Model.Address</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-3 mt-5">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-lg px-5">
+                            <i class="fas fa-edit me-2"></i> Düzenle
+                        </a>
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-5">
+                            <i class="fas fa-arrow-left me-2"></i> Geri Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

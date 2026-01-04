@@ -1,0 +1,267 @@
+@model IEnumerable<HastaneRandevuSistemi.Models.Doctor>
+@using HastaneRandevuSistemi.Models
+
+@{
+    ViewData["Title"] = "Hasta Paneli";
+    var patient = ViewBag.Patient as HastaneRandevuSistemi.Models.Patient;
+    var totalAppointments = ViewBag.TotalAppointments as int? ?? 0;
+    var upcomingAppointments = ViewBag.UpcomingAppointments as List<Appointment> ?? new List<Appointment>();
+    var completedAppointments = ViewBag.CompletedAppointments as List<Appointment> ?? new List<Appointment>();
+    var specializations = ViewBag.Specializations as List<Specialization> ?? new List<Specialization>();
+    var selectedSpecialization = ViewBag.SelectedSpecialization as string;
+    var searchTerm = ViewBag.SearchTerm as string;
+}
+
+<link rel="stylesheet" href="~/css/patient-panel.css" />
+
+<div class="patient-dashboard">
+    <!-- Hoş Geldin Bölümü -->
+    <div class="welcome-section">
+        <div class="welcome-header">
+            <div class="patient-info">
+                <div class="patient-avatar">
+                    @if (!string.IsNullOrEmpty(patient?.PhotoUrl))
+                    {
+                        <img src="@patient.PhotoUrl" alt="@patient?.FullName" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+                    }
+                    else
+                    {
+                        <div class="default-avatar" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; color: white; font-size: 3rem;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    }
+                </div>
+                <div class="patient-details">
+                    <h1>Hoş Geldiniz, @patient?.FullName</h1>
+                    <p>Hastane Randevu Sistemi - Doktorlarınızı Keşfedin ve Randevu Alın</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quick-stats">
+            <a href="@Url.Action("Index", "Appointment")" class="stat-item clickable-stat" title="Tüm Randevularınızı Görüntüleyin">
+                <span class="stat-number">@totalAppointments</span>
+                <span class="stat-label">Toplam Randevu</span>
+            </a>
+            <a href="@Url.Action("Index", "Appointment")" class="stat-item clickable-stat" title="Yaklaşan Randevularınızı Görüntüleyin">
+                <span class="stat-number">@upcomingAppointments.Count</span>
+                <span class="stat-label">Yaklaşan Randevu</span>
+            </a>
+            <a href="@Url.Action("Index", "Appointment")" class="stat-item clickable-stat" title="Tamamlanan Randevularınızı Görüntüleyin">
+                <span class="stat-number">@completedAppointments.Count</span>
+                <span class="stat-label">Tamamlanan</span>
+            </a>
+            <div class="stat-item">
+                <span class="stat-number">@Model.Count()</span>
+                <span class="stat-label">Müsait Doktor</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtreleme Bölümü -->
+    <div class="filter-section">
+        <h3 class="filter-title">
+            <i class="fas fa-filter"></i>
+            Doktor Arama ve Filtreleme
+        </h3>
+        <form method="get" class="filter-form">
+            <div class="filter-group">
+                <label class="filter-label">Uzmanlık Alanı</label>
+                <select name="specialization" class="filter-select">
+                    <option value="">Tüm Uzmanlıklar</option>
+                    @foreach (var spec in specializations)
+                    {
+                        <option value="@spec.Name" @(selectedSpecialization == spec.Name ? "selected" : "")>@spec.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Doktor Ara</label>
+                <input type="text" name="search" class="filter-input" placeholder="Doktor adı veya uzmanlık..." value="@searchTerm">
+            </div>
+            <button type="submit" class="filter-btn">
+                <i class="fas fa-search"></i>
+                Ara
+            </button>
+        </form>
+    </div>
+
+    <!-- Yaklaşan Randevular -->
+    @if (upcomingAppointments.Any())
+    {
+        <div class="appointments-section">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <i class="fas fa-calendar-check"></i>
+                    Yaklaşan Randevularım
+                </h3>
+            </div>
+            <div class="appointments-grid">
+                @foreach (var appointment in upcomingAppointments.Take(3))
+                {
+                    <div class="appointment-card upcoming">
+                        <div class="appointment-header">
+                            <div>
+                                <div class="appointment-date">@appointment.AppointmentDate.ToString("dd MMMM yyyy")</div>
+                                <div class="appointment-time">@appointment.AppointmentDate.ToString("HH:mm")</div>
+                            </div>
+                            <span class="appointment-status status-upcoming">Yaklaşan</span>
+                        </div>
+                        <div class="doctor-info">
+                            <div class="doctor-avatar">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="doctor-details">
+                                <h4>Dr. @appointment.Doctor.FullName</h4>
+                                <div class="doctor-specialty">@appointment.Doctor.Specialization?.Name</div>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(appointment.Notes))
+                        {
+                            <div class="appointment-notes">
+                                <p class="notes-text">@appointment.Notes</p>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Geçmiş Randevular -->
+    @if (completedAppointments.Any())
+    {
+        <div class="appointments-section">
+            <div class="section-header">
+                <h3 class="section-title">
+                    <i class="fas fa-history"></i>
+                    Son Randevularım
+                </h3>
+            </div>
+            <div class="appointments-grid">
+                @foreach (var appointment in completedAppointments)
+                {
+                    <div class="appointment-card completed">
+                        <div class="appointment-header">
+                            <div>
+                                <div class="appointment-date">@appointment.AppointmentDate.ToString("dd MMMM yyyy")</div>
+                                <div class="appointment-time">@appointment.AppointmentDate.ToString("HH:mm")</div>
+                            </div>
+                            <span class="appointment-status status-completed">Tamamlandı</span>
+                        </div>
+                        <div class="doctor-info">
+                            <div class="doctor-avatar">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="doctor-details">
+                                <h4>Dr. @appointment.Doctor.FullName</h4>
+                                <div class="doctor-specialty">@appointment.Doctor.Specialization?.Name</div>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(appointment.Notes))
+                        {
+                            <div class="appointment-notes">
+                                <p class="notes-text">@appointment.Notes</p>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Müsait Doktorlar -->
+    <div class="doctors-section">
+        <div class="section-header">
+            <h3 class="section-title">
+                <i class="fas fa-user-md"></i>
+                Müsait Doktorlar
+            </h3>
+        </div>
+        
+        @if (Model != null && Model.Any())
+        {
+            <div class="doctors-grid">
+                @foreach (var doctor in Model)
+                {
+                    <div class="doctor-card">
+                        <div class="doctor-header">
+                            <div class="doctor-avatar-large">
+                                @if (!string.IsNullOrEmpty(doctor.PhotoUrl))
+                                {
+                                    <img src="@doctor.PhotoUrl" alt="Dr. @doctor.FullName" />
+                                }
+                                else
+                                {
+                                    <div class="default-avatar">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                }
+                            </div>
+                            <div class="doctor-info">
+                                <h3>Dr. @doctor.FullName</h3>
+                                <div class="doctor-specialty">@doctor.Specialization?.Name</div>
+                            </div>
+                        </div>
+                        
+                        <div class="doctor-details">
+                            <div class="detail-row">
+                                <span class="detail-label">📧 E-posta</span>
+                                <span class="detail-value">@doctor.Email</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">📞 Telefon</span>
+                                <span class="detail-value">@doctor.PhoneNumber</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">✅ Durum</span>
+                                <span class="status-available">Müsait</span>
+                            </div>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(doctor.Biography))
+                        {
+                            <div class="biography-section">
+                                <div class="biography-title">👨‍⚕️ Hakkında</div>
+                                <div class="biography-text">@doctor.Biography</div>
+                            </div>
+                        }
+                        
+                        <a href="/Appointment/Create?doctorId=@doctor.Id" class="book-btn">
+                            <i class="fas fa-calendar-plus"></i>
+                            Randevu Al
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <h3 class="empty-title">Arama kriterlerinize uygun doktor bulunamadı</h3>
+                <p class="empty-text">Farklı arama terimleri deneyebilir veya filtreleri temizleyebilirsiniz</p>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    // İstatistik kartlarını tıklanabilir yap
+    document.addEventListener('DOMContentLoaded', function() {
+        var statItems = document.querySelectorAll('.clickable-stat');
+        statItems.forEach(function(item) {
+            item.addEventListener('click', function(e) {
+                var href = this.getAttribute('href');
+                if (href) {
+                    window.location.href = href;
+                }
+            });
+            // Mouse stilini belirginleştir
+            item.style.cursor = 'pointer';
+            item.style.pointerEvents = 'auto';
+        });
+    });
+</script>

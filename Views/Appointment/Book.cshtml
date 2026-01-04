@@ -1,0 +1,113 @@
+@model HastaneRandevuSistemi.Models.Appointment
+
+@{
+    ViewData["Title"] = "Randevu Al";
+    var currentPatient = ViewBag.CurrentPatient as HastaneRandevuSistemi.Models.Patient;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-calendar-plus me-2"></i>Randevu Oluştur</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Book" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Status" value="1" />
+                        
+                        <!-- Doktor Seçimi -->
+                        <div class="mb-4">
+                            <label asp-for="DoctorId" class="form-label fw-bold">
+                                <i class="fas fa-user-md me-2 text-primary"></i>Doktor <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="DoctorId" class="form-select form-select-lg" asp-items="ViewBag.DoctorId" required>
+                                <option value="">Doktor seçiniz...</option>
+                            </select>
+                            <span asp-validation-for="DoctorId" class="text-danger"></span>
+                        </div>
+
+                        <!-- Hasta Seçimi -->
+                        @if (currentPatient != null)
+                        {
+                            <div class="alert alert-info">
+                                <i class="fas fa-user-circle me-2"></i>
+                                <strong>@currentPatient.FullName</strong> - Giriş yapmış hesabınız seçildi.
+                            </div>
+                        }
+                        <div class="mb-4">
+                            <label asp-for="PatientId" class="form-label fw-bold">
+                                <i class="fas fa-user me-2 text-primary"></i>Hasta <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="PatientId" class="form-select form-select-lg" asp-items="ViewBag.PatientId" required>
+                                <option value="">Hasta seçiniz...</option>
+                            </select>
+                            <span asp-validation-for="PatientId" class="text-danger"></span>
+                        </div>
+
+                        <!-- Randevu Tarihi -->
+                        <div class="mb-4">
+                            <label asp-for="AppointmentDate" class="form-label fw-bold">
+                                <i class="fas fa-calendar me-2 text-primary"></i>Randevu Tarihi <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="AppointmentDate" type="date" class="form-control form-control-lg" required />
+                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                        </div>
+
+                        <!-- Randevu Saati -->
+                        <div class="mb-4">
+                            <label asp-for="AppointmentTime" class="form-label fw-bold">
+                                <i class="fas fa-clock me-2 text-primary"></i>Randevu Saati <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="AppointmentTime" type="time" class="form-control form-control-lg" required />
+                            <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+                        </div>
+
+                        <!-- Notlar -->
+                        <div class="mb-4">
+                            <label asp-for="Notes" class="form-label fw-bold">
+                                <i class="fas fa-sticky-note me-2 text-primary"></i>Notlar (İsteğe bağlı)
+                            </label>
+                            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Randevu ile ilgili notlarınızı yazabilirsiniz..."></textarea>
+                        </div>
+
+                        <!-- Butonlar -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="/" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>Ana Sayfa
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check me-2"></i>Randevu Oluştur
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hasta otomatik seç
+            @if (currentPatient != null)
+            {
+                <text>
+                const patientSelect = document.querySelector('select[name="PatientId"]');
+                if (patientSelect) {
+                    patientSelect.value = '@currentPatient.Id';
+                }
+                </text>
+            }
+            
+            // Minimum tarihi bugün yap
+            const dateInput = document.querySelector('input[type="date"]');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+        });
+    </script>
+}

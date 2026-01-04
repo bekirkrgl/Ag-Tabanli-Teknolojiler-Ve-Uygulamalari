@@ -1,0 +1,622 @@
+@model HastaneRandevuSistemi.Models.Appointment
+
+@{
+    var selectedDoctor = ViewBag.SelectedDoctor as HastaneRandevuSistemi.Models.Doctor;
+    if (selectedDoctor != null)
+    {
+        ViewData["Title"] = $"{selectedDoctor.FullName} için Randevu Al";
+    }
+    else
+    {
+    ViewData["Title"] = "Randevu Al";
+    }
+}
+
+<style>
+/* MODERN RANDEVU ALMA FORMU CSS */
+.form-container {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid #e2e8f0;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #2d3748;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.form-subtitle {
+    text-align: center;
+    color: #718096;
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 2rem;
+    flex: 1;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 1.1rem;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    outline: none;
+}
+
+.form-control.is-invalid, .form-select.is-invalid {
+    border-color: #dc3545;
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.textarea-custom {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.btn-modern {
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.btn-modern:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.btn-primary-modern {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.btn-outline-modern {
+    background: transparent !important;
+    color: #667eea !important;
+    border: 3px solid #667eea !important;
+    text-decoration: none !important;
+}
+
+.btn-outline-modern:hover {
+    background: #667eea !important;
+    color: white !important;
+    text-decoration: none !important;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+}
+
+.btn-outline-modern:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+}
+
+.btn-outline-modern:active {
+    transform: translateY(-1px);
+}
+
+.btn-success-modern {
+    background: linear-gradient(135deg, #48bb78, #68d391);
+    color: white;
+}
+
+.btn-success-modern:hover {
+    background: linear-gradient(135deg, #38a169, #48bb78);
+    color: white;
+}
+
+.form-icon {
+    color: #667eea;
+    margin-right: 0.5rem;
+}
+
+.required {
+    color: #dc3545;
+}
+
+.form-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+
+.alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    font-size: 0.9rem;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+.datetime-input {
+    position: relative;
+}
+
+.datetime-input .form-control {
+    padding-right: 40px;
+}
+
+.datetime-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #667eea;
+    pointer-events: none;
+}
+
+@@media (max-width: 768px) {
+    .form-container {
+        padding: 2rem 1.5rem;
+    }
+    
+    .form-title {
+        font-size: 2rem;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+}
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="form-container">
+                <h2 class="form-title">
+                    <i class="fas fa-calendar-plus me-3"></i>
+                    @if (ViewBag.SelectedDoctorId != null)
+                    {
+                        <span>@selectedDoctor?.FullName için Randevu Al</span>
+                    }
+                    else
+                    {
+                        <span>Randevu Al</span>
+                    }
+                </h2>
+                <p class="form-subtitle">
+                    @if (ViewBag.SelectedDoctorId != null)
+                    {
+                        <span>Uygun tarih ve saat seçerek @selectedDoctor?.FullName için randevunuzu oluşturun</span>
+                    }
+                    else
+                    {
+                        <span>Doktorunuzu seçin ve uygun tarih-saat belirleyerek randevunuzu oluşturun</span>
+                    }
+                </p>
+                
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+                
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+                
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Hata: @ViewBag.Error
+                    </div>
+                }
+                
+                @if (ViewBag.DoctorCount != null)
+                {
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        @ViewBag.DoctorCount doktor ve @ViewBag.PatientCount hasta bulundu.
+                    </div>
+                }
+                
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    @if (ViewBag.SelectedDoctorId != null)
+                    {
+                        // Doktor zaten seçilmiş - sadece bilgi göster
+                        <div class="alert alert-info mb-4" style="border-left: 4px solid #0dcaf0;">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <i class="fas fa-user-md" style="font-size: 2rem; color: #0dcaf0;"></i>
+                                <div style="flex: 1;">
+                                    <h5 style="margin: 0; color: #0c5460; font-weight: 600;">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        Seçili Doktor
+                                    </h5>
+                                    <p style="margin: 5px 0 0 0; color: #055160;">
+                                        <strong>@selectedDoctor?.FullName</strong><br>
+                                        <small>
+                                            <i class="fas fa-stethoscope me-1"></i>
+                                            @selectedDoctor?.Specialization?.Name
+                                        </small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="DoctorId" value="@ViewBag.SelectedDoctorId" id="doctorSelect" />
+                    }
+                    else
+                    {
+                        // Genel randevu al - doktor seçimi göster
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="DoctorId" class="form-label">
+                                <i class="fas fa-user-md form-icon"></i>
+                                Doktor Seçin <span class="required">*</span>
+                            </label>
+                            <select name="DoctorId" class="form-select" id="doctorSelect">
+                                <option value="">👨‍⚕️ Doktor seçiniz...</option>
+                                @if (ViewBag.DoctorId != null)
+                                {
+                                    foreach (var item in (List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewBag.DoctorId)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>
+                            <div class="form-text">Uzmanlık alanına göre doktor seçebilirsiniz</div>
+                            <span asp-validation-for="DoctorId" class="invalid-feedback"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-user form-icon"></i>
+                                Hasta Bilgileri
+                            </label>
+                            <div class="form-control" style="background-color: #f8f9fa; border: 2px solid #e9ecef;">
+                                <strong>@ViewBag.Patient?.FullName</strong><br>
+                                <small class="text-muted">@ViewBag.Patient?.Email</small>
+                            </div>
+                            <div class="form-text">Giriş yaptığınız hasta hesabı otomatik olarak seçildi</div>
+                            <input type="hidden" asp-for="PatientId" value="@ViewBag.PatientId" />
+                        </div>
+                    </div>
+                    }
+                    
+                    @if (ViewBag.SelectedDoctorId != null)
+                    {
+                        // Doktor seçiliyse hasta bilgilerini göster
+                        <div class="form-group mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-user form-icon"></i>
+                                Hasta Bilgileri
+                            </label>
+                            <div class="form-control" style="background-color: #f8f9fa; border: 2px solid #e9ecef;">
+                                <strong>@ViewBag.Patient?.FullName</strong><br>
+                                <small class="text-muted">@ViewBag.Patient?.Email</small>
+                            </div>
+                            <div class="form-text">Giriş yaptığınız hasta hesabı otomatik olarak seçildi</div>
+                            <input type="hidden" asp-for="PatientId" value="@ViewBag.PatientId" />
+                        </div>
+                    }
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="AppointmentDate" class="form-label">
+                                <i class="fas fa-calendar form-icon"></i>
+                                Randevu Tarihi <span class="required">*</span>
+                            </label>
+                            <div class="datetime-input">
+                                <input type="date" name="AppointmentDate" id="appointmentDate" class="form-control" required />
+                                <i class="fas fa-calendar-alt datetime-icon"></i>
+                            </div>
+                            <div class="form-text">Bugünden itibaren randevu alabilirsiniz</div>
+                            <span asp-validation-for="AppointmentDate" class="invalid-feedback"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="AppointmentTime" class="form-label">
+                                <i class="fas fa-clock form-icon"></i>
+                                Randevu Saati <span class="required">*</span>
+                            </label>
+                            <div class="datetime-input">
+                                <input type="time" name="AppointmentTime" id="appointmentTime" class="form-control" required />
+                                <i class="fas fa-clock datetime-icon"></i>
+                            </div>
+                            <div class="form-text">Çalışma saatleri: 08:00 - 17:00 arası (Pazartesi-Cuma)</div>
+                            <span asp-validation-for="AppointmentTime" class="invalid-feedback"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label asp-for="Notes" class="form-label">
+                            <i class="fas fa-sticky-note form-icon"></i>
+                            Notlar
+                        </label>
+                        <textarea asp-for="Notes" class="form-control textarea-custom" placeholder="📝 Randevu ile ilgili özel notlarınızı yazabilirsiniz... (İsteğe bağlı)" rows="4"></textarea>
+                        <div class="form-text">Doktorunuzla paylaşmak istediğiniz özel bilgileri buraya yazabilirsiniz</div>
+                        <span asp-validation-for="Notes" class="invalid-feedback"></span>
+                    </div>
+                    
+                    <div class="d-flex gap-3 justify-content-center mt-4">
+                        <button type="submit" class="btn-modern btn-success-modern" id="submitBtn">
+                            <i class="fas fa-calendar-check"></i>
+                            🎯 Randevu Oluştur
+                        </button>
+                        <a href="/" class="btn-modern btn-outline-modern" role="button" tabindex="0">
+                            <i class="fas fa-home"></i>
+                            Ana Sayfa
+                        </a>
+                        <a href="/Appointment" class="btn-modern btn-outline-modern" role="button" tabindex="0" style="background-color: #007bff; color: white; border-color: #007bff;">
+                            <i class="fas fa-calendar-alt"></i>
+                            Randevularım
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.querySelector('#appointmentDate');
+            const timeInput = document.querySelector('#appointmentTime');
+            const form = document.querySelector('form');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // Tarih seçici için minimum tarih bugün olsun (geçmiş tarih engelleme)
+            // Hafta sonlarını engellemek için bir fonksiyon ekle
+            function isWeekend(dateStr) {
+                const date = new Date(dateStr);
+                const day = date.getDay();
+                return day === 0 || day === 6; // 0=Pazar, 6=Cumartesi
+            }
+            
+            // İlk geçerli hafta içi günü bul
+            function getNextWeekday() {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                let nextDay = new Date(today);
+                
+                // Bugün hafta sonu ise, bir sonraki Pazartesi'yi bul
+                while (nextDay.getDay() === 0 || nextDay.getDay() === 6) {
+                    nextDay.setDate(nextDay.getDate() + 1);
+                }
+                
+                return nextDay.toISOString().split('T')[0];
+            }
+            
+            const today = new Date().toISOString().split('T')[0];
+            const nextWeekday = getNextWeekday();
+            
+            if (dateInput) {
+                dateInput.setAttribute('min', today);
+                dateInput.setAttribute('required', 'required');
+                
+                // Eğer bugün hafta sonu ise, min'i bir sonraki Pazartesi yap
+                if (isWeekend(today)) {
+                    dateInput.setAttribute('min', nextWeekday);
+                }
+            }
+            
+            // Saat seçici için çalışma saatleri aralığı (08:00 - 17:00, 5'ten sonra yok)
+            if (timeInput) {
+                timeInput.setAttribute('min', '08:00');
+                timeInput.setAttribute('max', '17:00');
+                timeInput.setAttribute('required', 'required');
+                
+                // Saat değiştiğinde kontrol et
+                timeInput.addEventListener('change', function() {
+                    const selectedTime = this.value;
+                    if (selectedTime) {
+                        const hour = parseInt(selectedTime.split(':')[0]);
+                        const minute = parseInt(selectedTime.split(':')[1]);
+                        // 08:00 - 17:00 arası olmalı (17:00 dahil, 17:01 geçersiz)
+                        if (hour < 8 || hour > 17 || (hour === 17 && minute > 0)) {
+                            alert('⚠️ Randevu saatleri 08:00 - 17:00 arasındadır. Lütfen geçerli bir saat seçin.');
+                            this.value = '';
+                        }
+                    }
+                });
+            }
+            
+            // Tarih değiştiğinde kontrol et (geçmiş tarih ve hafta sonu engelleme)
+            if (dateInput) {
+                dateInput.addEventListener('change', function() {
+                    const selectedDate = new Date(this.value);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    if (selectedDate < today) {
+                        alert('⚠️ Geçmiş bir tarihe randevu alamazsınız. Lütfen bugünden itibaren bir tarih seçin.');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    // Hafta sonu kontrolü (Cumartesi=6, Pazar=0)
+                    const dayOfWeek = selectedDate.getDay();
+                    if (dayOfWeek === 0 || dayOfWeek === 6) {
+                        alert('⚠️ Hafta sonu randevu alamazsınız. Lütfen hafta içi (Pazartesi-Cuma) bir tarih seçin.');
+                        this.value = '';
+                        return;
+                    }
+                });
+            }
+            
+            // Form submit kontrolü
+            if (form && submitBtn) {
+                form.addEventListener('submit', function(e) {
+                    // Önce validasyon kontrolü
+                    const doctorSelectElement = document.querySelector('#doctorSelect');
+                    const doctorId = doctorSelectElement ? doctorSelectElement.value : '';
+                    const appointmentDate = dateInput ? dateInput.value : '';
+                    const appointmentTime = timeInput ? timeInput.value : '';
+                    
+                    console.log('Form submit - DoctorId:', doctorId);
+                    console.log('Form submit - AppointmentDate:', appointmentDate);
+                    console.log('Form submit - AppointmentTime:', appointmentTime);
+                    
+                    let hasError = false;
+                    
+                    // Doktor seçilmediyse (sadece select element varsa kontrol et - hidden input varsa zaten seçili)
+                    if (doctorSelectElement && doctorSelectElement.tagName === 'SELECT' && (!doctorId || doctorId === '')) {
+                        alert('⚠️ Lütfen bir doktor seçin.');
+                        hasError = true;
+                    }
+                    
+                    // Tarih seçilmediyse
+                    if (!appointmentDate || appointmentDate.trim() === '') {
+                        alert('⚠️ Lütfen bir randevu tarihi seçin.');
+                        hasError = true;
+                    }
+                    
+                    // Geçmiş tarih kontrolü
+                    if (!hasError && appointmentDate) {
+                        const selectedDate = new Date(appointmentDate + 'T00:00:00');
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        if (selectedDate < today) {
+                            alert('⚠️ Geçmiş bir tarihe randevu alamazsınız.');
+                            hasError = true;
+                        }
+                        
+                        // Hafta sonu kontrolü (Cumartesi=6, Pazar=0)
+                        if (!hasError) {
+                            const dayOfWeek = selectedDate.getDay();
+                            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                                alert('⚠️ Hafta sonu randevu alamazsınız. Lütfen hafta içi (Pazartesi-Cuma) bir tarih seçin.');
+                                hasError = true;
+                            }
+                        }
+                    }
+                    
+                    // Saat seçilmediyse
+                    if (!hasError && (!appointmentTime || appointmentTime.trim() === '')) {
+                        alert('⚠️ Lütfen bir randevu saati seçin.');
+                        hasError = true;
+                    }
+                    
+                    // Saat kontrolü (08:00 - 17:00 arası, 17:00 dahil)
+                    if (!hasError && appointmentTime) {
+                        const timeParts = appointmentTime.split(':');
+                        if (timeParts.length === 2) {
+                            const hour = parseInt(timeParts[0]);
+                            const minute = parseInt(timeParts[1]);
+                            if (isNaN(hour) || isNaN(minute) || hour < 8 || hour > 17 || (hour === 17 && minute > 0)) {
+                                alert('⚠️ Randevu saatleri 08:00 - 17:00 arasındadır.');
+                                hasError = true;
+                            }
+                        } else {
+                            alert('⚠️ Lütfen geçerli bir randevu saati seçin.');
+                            hasError = true;
+                        }
+                    }
+                    
+                    // Eğer hata varsa, form submit'i engelle
+                    if (hasError) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('❌ Form submit engellendi - hata var');
+                        return false;
+                    }
+                    
+                    // Eğer tüm kontroller geçtiyse, butonu disable et
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Randevu Oluşturuluyor...';
+                    
+                    // Form submit edilecek - preventDefault() çağırma!
+                    console.log('✅ Form submit ediliyor...');
+                    console.log('Final values - DoctorId:', doctorId);
+                    console.log('Final values - AppointmentDate:', appointmentDate);
+                    console.log('Final values - AppointmentTime:', appointmentTime);
+                    
+                    // Input'ların name attribute'larını kontrol et
+                    console.log('Input name attributes:');
+                    console.log('dateInput.name:', dateInput ? dateInput.name : 'dateInput bulunamadı');
+                    console.log('timeInput.name:', timeInput ? timeInput.name : 'timeInput bulunamadı');
+                    
+                    // Form'un action ve method'unu kontrol et
+                    console.log('Form action:', form.action);
+                    console.log('Form method:', form.method);
+                    
+                    return true;
+                });
+            }
+        });
+    </script>
+}

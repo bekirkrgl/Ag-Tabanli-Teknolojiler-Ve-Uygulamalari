@@ -1,0 +1,135 @@
+@model HastaneRandevuSistemi.Models.AvailabilityBlock
+
+@{
+    ViewData["Title"] = "Müsaitlik Bloğu Detayları";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h4><i class="fas fa-ban"></i> Müsaitlik Bloğu Detayları</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-user-md"></i> Doktor Bilgileri</h5>
+                        <p><strong>Ad Soyad:</strong> @Model.Doctor?.FullName</p>
+                        <p><strong>Branş:</strong> @Model.Doctor?.Specialization?.Name</p>
+                        <p><strong>E-posta:</strong> @Model.Doctor?.Email</p>
+                        <p><strong>Telefon:</strong> @Model.Doctor?.PhoneNumber</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-calendar-times"></i> Müsaitlik Bloğu Bilgileri</h5>
+                        <p><strong>Başlangıç:</strong> @Model.StartDateTime.ToString("dd.MM.yyyy HH:mm")</p>
+                        <p><strong>Bitiş:</strong> @Model.EndDateTime.ToString("dd.MM.yyyy HH:mm")</p>
+                        <p><strong>Durum:</strong> 
+                            <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary")">
+                                @(Model.IsActive ? "Aktif" : "Pasif")
+                            </span>
+                        </p>
+                        <p><strong>Oluşturulma:</strong> @Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")</p>
+                    </div>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <hr>
+                    <h5><i class="fas fa-comment"></i> Açıklama</h5>
+                    <div class="alert alert-light">
+                        <p class="mb-0">@Model.Description</p>
+                    </div>
+                }
+                
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-clock"></i> Süre Bilgileri</h5>
+                        @{
+                            var duration = Model.EndDateTime - Model.StartDateTime;
+                        }
+                        <p><strong>Toplam Süre:</strong> 
+                            @if (duration.TotalDays >= 1)
+                            {
+                                <span class="badge bg-info">@((int)duration.TotalDays) gün @((int)(duration.TotalHours % 24)) saat</span>
+                            }
+                            else if (duration.TotalHours >= 1)
+                            {
+                                <span class="badge bg-warning">@((int)duration.TotalHours) saat @((int)(duration.TotalMinutes % 60)) dakika</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@((int)duration.TotalMinutes) dakika</span>
+                            }
+                        </p>
+                        <p><strong>Başlangıç Günü:</strong> @Model.StartDateTime.ToString("dddd")</p>
+                        <p><strong>Bitiş Günü:</strong> @Model.EndDateTime.ToString("dddd")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-chart-bar"></i> Durum Bilgileri</h5>
+                        <p><strong>Müsaitlik Durumu:</strong> 
+                            @if (Model.IsActive)
+                            {
+                                <span class="text-danger">Doktor bu süre boyunca müsait değil</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Bu blok pasif durumda</span>
+                            }
+                        </p>
+                        <p><strong>Geçerlilik:</strong> 
+                            @if (Model.EndDateTime < DateTime.Now)
+                            {
+                                <span class="text-muted">Süresi dolmuş</span>
+                            }
+                            else if (Model.StartDateTime > DateTime.Now)
+                            {
+                                <span class="text-info">Gelecekte başlayacak</span>
+                            }
+                            else
+                            {
+                                <span class="text-warning">Şu anda aktif</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-cogs"></i> İşlemler</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Düzenle
+                    </a>
+                    <a asp-controller="Doctor" asp-action="Details" asp-route-id="@Model.DoctorId" class="btn btn-info">
+                        <i class="fas fa-user-md"></i> Doktor Detayları
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Geri Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Bilgi</h5>
+            </div>
+            <div class="card-body">
+                <p>Müsaitlik blokları:</p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success"></i> Doktorun müsait olmadığı zamanları belirler</li>
+                    <li><i class="fas fa-check text-success"></i> Randevu alınamaz saatleri gösterir</li>
+                    <li><i class="fas fa-check text-success"></i> Tatil, izin gibi durumları yönetir</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

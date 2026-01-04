@@ -1,0 +1,355 @@
+@model HastaneRandevuSistemi.Models.Doctor
+
+@{
+    ViewData["Title"] = "Doktor Detayları";
+}
+
+<style>
+/* MODERN DOKTOR DETAY SAYFASI CSS */
+.detail-container {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 2rem;
+}
+
+.detail-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.doctor-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    font-size: 4rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.doctor-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.doctor-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.doctor-specialization {
+    font-size: 1.3rem;
+    color: #667eea;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.doctor-status {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-inactive {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.detail-info {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.info-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.info-content h5 {
+    margin: 0 0 0.5rem 0;
+    color: #2d3748;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.info-content p {
+    margin: 0;
+    color: #718096;
+    font-size: 1rem;
+}
+
+.biography-section {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e2e8f0;
+}
+
+.biography-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.biography-text {
+    color: #4a5568;
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.working-hours-section {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e2e8f0;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.working-hour-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
+}
+
+.day-name {
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.time-range {
+    color: #667eea;
+    font-weight: 500;
+}
+
+.btn-modern {
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-modern:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.btn-primary-modern {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.btn-outline-modern {
+    background: transparent;
+    color: #667eea;
+    border: 3px solid #667eea;
+}
+
+.btn-outline-modern:hover {
+    background: #667eea;
+    color: white;
+}
+
+.btn-success-modern {
+    background: linear-gradient(135deg, #48bb78, #68d391);
+    color: white;
+}
+
+.btn-success-modern:hover {
+    background: linear-gradient(135deg, #38a169, #48bb78);
+    color: white;
+}
+
+@@media (max-width: 768px) {
+    .detail-container {
+        padding: 2rem 1.5rem;
+    }
+    
+    .doctor-name {
+        font-size: 2rem;
+    }
+    
+    .info-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .info-icon {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .working-hour-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+}
+</style>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="detail-container">
+                <div class="detail-header">
+                    <div class="doctor-avatar">
+                        @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+                        {
+                            <img src="@Model.PhotoUrl" alt="@Model.FullName" />
+                        }
+                        else
+                        {
+                            <i class="fas fa-user-md"></i>
+                        }
+                    </div>
+                    <h1 class="doctor-name">@Model.FullName</h1>
+                    <p class="doctor-specialization">@Model.Specialization?.Name</p>
+                    <span class="doctor-status @(Model.IsActive ? "status-active" : "status-inactive")">
+                        <i class="fas fa-circle me-2"></i>
+                        @(Model.IsActive ? "Aktif" : "Pasif")
+                    </span>
+                </div>
+                
+                <div class="detail-info">
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="info-content">
+                            <h5>E-posta Adresi</h5>
+                            <p>@Model.Email</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="info-content">
+                            <h5>Telefon Numarası</h5>
+                            <p>@Model.PhoneNumber</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar-plus"></i>
+                        </div>
+                        <div class="info-content">
+                            <h5>Kayıt Tarihi</h5>
+                            <p>@Model.CreatedDate.ToString("dd MMMM yyyy")</p>
+                        </div>
+                    </div>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.Biography))
+                {
+                    <div class="biography-section">
+                        <h3 class="biography-title">
+                            <i class="fas fa-user-md me-3"></i>
+                            Hakkında
+                        </h3>
+                        <p class="biography-text">@Model.Biography</p>
+                    </div>
+                }
+                
+                @if (Model.WorkingHours != null && Model.WorkingHours.Any())
+                {
+                    <div class="working-hours-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-clock me-3"></i>
+                            Çalışma Saatleri
+                        </h3>
+                        @foreach (var workingHour in Model.WorkingHours)
+                        {
+                            <div class="working-hour-item">
+                                <span class="day-name">@workingHour.DayOfWeek</span>
+                                <span class="time-range">@workingHour.StartTime.ToString("HH:mm") - @workingHour.EndTime.ToString("HH:mm")</span>
+                            </div>
+                        }
+                    </div>
+                }
+                
+                <div class="d-flex gap-3 justify-content-center">
+                    <a asp-controller="Appointment" asp-action="Create" asp-route-doctorId="@Model.Id" class="btn-modern btn-success-modern">
+                        <i class="fas fa-calendar-plus"></i>
+                        Randevu Al
+                    </a>
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-modern btn-primary-modern">
+                        <i class="fas fa-edit"></i>
+                        Düzenle
+                    </a>
+                    <a asp-action="Index" class="btn-modern btn-outline-modern">
+                        <i class="fas fa-arrow-left"></i>
+                        Geri Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

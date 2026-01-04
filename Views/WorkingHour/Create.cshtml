@@ -1,0 +1,306 @@
+@model HastaneRandevuSistemi.Models.WorkingHour
+
+@{
+    ViewData["Title"] = "Yeni Çalışma Saati Ekle";
+}
+
+<style>
+/* MODERN ÇALIŞMA SAATİ FORMU CSS */
+.form-container {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid #e2e8f0;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.form-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #2d3748;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.form-subtitle {
+    text-align: center;
+    color: #718096;
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 2rem;
+    flex: 1;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 1.1rem;
+}
+
+.form-control, .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    outline: none;
+}
+
+.form-control.is-invalid, .form-select.is-invalid {
+    border-color: #dc3545;
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.time-input {
+    position: relative;
+}
+
+.time-input .form-control {
+    padding-right: 40px;
+}
+
+.time-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #667eea;
+    pointer-events: none;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+
+.checkbox-input {
+    width: 20px;
+    height: 20px;
+    accent-color: #667eea;
+}
+
+.checkbox-label {
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0;
+    cursor: pointer;
+}
+
+.btn-modern {
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-modern:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.btn-primary-modern {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.btn-outline-modern {
+    background: transparent;
+    color: #667eea;
+    border: 3px solid #667eea;
+}
+
+.btn-outline-modern:hover {
+    background: #667eea;
+    color: white;
+}
+
+.form-icon {
+    color: #667eea;
+    margin-right: 0.5rem;
+}
+
+.required {
+    color: #dc3545;
+}
+
+@@media (max-width: 768px) {
+    .form-container {
+        padding: 2rem 1.5rem;
+    }
+    
+    .form-title {
+        font-size: 2rem;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+}
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-container">
+                <h2 class="form-title">
+                    <i class="fas fa-clock me-3"></i>
+                    Yeni Çalışma Saati Ekle
+                </h2>
+                <p class="form-subtitle">
+                    Doktor için çalışma saatlerini belirleyin
+                </p>
+                
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    @if (ViewBag.Doctor != null)
+                    {
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-user-md form-icon"></i>
+                                Doktor
+                            </label>
+                            <div class="form-control" style="background-color: #f8f9fa; border: 2px solid #e9ecef;">
+                                <strong>@ViewBag.Doctor.FullName</strong> - @ViewBag.Doctor.Specialization.Name
+                            </div>
+                        </div>
+                    }
+                    
+                    <div class="form-group">
+                        <label asp-for="DayOfWeek" class="form-label">
+                            <i class="fas fa-calendar-day form-icon"></i>
+                            Haftanın Günü <span class="required">*</span>
+                        </label>
+                        <select asp-for="DayOfWeek" class="form-select">
+                            <option value="">Gün seçiniz...</option>
+                            <option value="Monday">Pazartesi</option>
+                            <option value="Tuesday">Salı</option>
+                            <option value="Wednesday">Çarşamba</option>
+                            <option value="Thursday">Perşembe</option>
+                            <option value="Friday">Cuma</option>
+                            <option value="Saturday">Cumartesi</option>
+                            <option value="Sunday">Pazar</option>
+                        </select>
+                        <span asp-validation-for="DayOfWeek" class="invalid-feedback"></span>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="StartTime" class="form-label">
+                                <i class="fas fa-play form-icon"></i>
+                                Başlangıç Saati <span class="required">*</span>
+                            </label>
+                            <div class="time-input">
+                                <input asp-for="StartTime" type="time" class="form-control" />
+                                <i class="fas fa-clock time-icon"></i>
+                            </div>
+                            <span asp-validation-for="StartTime" class="invalid-feedback"></span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label asp-for="EndTime" class="form-label">
+                                <i class="fas fa-stop form-icon"></i>
+                                Bitiş Saati <span class="required">*</span>
+                            </label>
+                            <div class="time-input">
+                                <input asp-for="EndTime" type="time" class="form-control" />
+                                <i class="fas fa-clock time-icon"></i>
+                            </div>
+                            <span asp-validation-for="EndTime" class="invalid-feedback"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="checkbox-group">
+                        <input asp-for="IsActive" type="checkbox" class="checkbox-input" checked />
+                        <label asp-for="IsActive" class="checkbox-label">
+                            <i class="fas fa-check-circle form-icon"></i>
+                            Bu çalışma saati aktif olsun
+                        </label>
+                    </div>
+                    
+                    <div class="d-flex gap-3 justify-content-center mt-4">
+                        <button type="submit" class="btn-modern btn-primary-modern">
+                            <i class="fas fa-save"></i>
+                            Kaydet
+                        </button>
+                        <a asp-action="Index" class="btn-modern btn-outline-modern">
+                            <i class="fas fa-arrow-left"></i>
+                            Geri Dön
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Saat seçiciler için çalışma saatleri aralığı
+            const startTimeInput = document.querySelector('input[name="StartTime"]');
+            const endTimeInput = document.querySelector('input[name="EndTime"]');
+            
+            startTimeInput.setAttribute('min', '06:00');
+            startTimeInput.setAttribute('max', '22:00');
+            
+            endTimeInput.setAttribute('min', '06:00');
+            endTimeInput.setAttribute('max', '23:00');
+            
+            // Başlangıç saati değiştiğinde bitiş saatini güncelle
+            startTimeInput.addEventListener('change', function() {
+                const startTime = this.value;
+                if (startTime) {
+                    endTimeInput.setAttribute('min', startTime);
+                }
+            });
+        });
+    </script>
+}

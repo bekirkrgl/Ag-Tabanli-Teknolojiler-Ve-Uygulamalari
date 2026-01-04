@@ -1,0 +1,67 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Hata";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white text-center">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Bir Hata Oluştu</h2>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-bug fa-5x text-danger mb-3"></i>
+                        <h3>Üzgünüz, beklenmeyen bir hata oluştu.</h3>
+                        <p class="lead">Lütfen daha sonra tekrar deneyin veya sistem yöneticisi ile iletişime geçin.</p>
+                    </div>
+                    
+                    @if (Model?.ShowRequestId == true)
+                    {
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-info-circle"></i> Hata Detayları</h5>
+                            <p><strong>Hata ID:</strong> <code>@Model.RequestId</code></p>
+                            <p class="mb-0">Bu ID'yi sistem yöneticisine bildirerek daha hızlı yardım alabilirsiniz.</p>
+                        </div>
+                    }
+                    
+                    <div class="mt-4">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-home"></i> Ana Sayfaya Dön
+                        </a>
+                        <button onclick="history.back()" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-arrow-left"></i> Geri Git
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-question-circle"></i> Ne Yapabilirsiniz?</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-check text-success"></i> Hemen Yapabilecekleriniz:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-arrow-right text-primary"></i> Sayfayı yenileyin</li>
+                                <li><i class="fas fa-arrow-right text-primary"></i> Ana sayfaya dönün</li>
+                                <li><i class="fas fa-arrow-right text-primary"></i> Farklı bir işlem deneyin</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-phone text-info"></i> Yardım Almak İçin:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-arrow-right text-primary"></i> Sistem yöneticisi ile iletişime geçin</li>
+                                <li><i class="fas fa-arrow-right text-primary"></i> Hata ID'sini paylaşın</li>
+                                <li><i class="fas fa-arrow-right text-primary"></i> Hatanın ne zaman oluştuğunu belirtin</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

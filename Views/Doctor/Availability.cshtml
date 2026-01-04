@@ -1,0 +1,164 @@
+@{
+    ViewData["Title"] = "Doktor Müsaitlik";
+    var doctor = ViewBag.Doctor as HastaneRandevuSistemi.Models.Doctor;
+    var availableDates = ViewBag.AvailableDates as List<DateTime>;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-clock text-success"></i> @doctor?.FullName - Müsaitlik Takvimi</h2>
+    <a asp-action="Book" asp-route-id="@doctor?.Id" class="btn btn-primary">
+        <i class="fas fa-calendar-plus"></i> Randevu Al
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-calendar-alt"></i> Müsait Tarihler</h5>
+            </div>
+            <div class="card-body">
+                @if (availableDates != null && availableDates.Any())
+                {
+                    <div class="row" id="availableDates">
+                        @foreach (var date in availableDates)
+                        {
+                            <div class="col-md-3 col-sm-4 col-6 mb-3">
+                                <div class="card border-success date-card" data-date="@date.ToString("yyyy-MM-dd")">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title">@date.ToString("dd MMMM")</h6>
+                                        <p class="card-text small">@date.ToString("dddd")</p>
+                                        <button class="btn btn-outline-success btn-sm view-times" 
+                                                data-date="@date.ToString("yyyy-MM-dd")">
+                                            <i class="fas fa-clock"></i> Saatleri Gör
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning text-center">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                        <h4>Müsait tarih bulunamadı</h4>
+                        <p>Seçilen dönemde müsait tarih bulunmamaktadır.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Doktor Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Ad Soyad:</strong> @doctor?.FullName</p>
+                <p><strong>Branş:</strong> @doctor?.Specialization?.Name</p>
+                <p><strong>E-posta:</strong> @doctor?.Email</p>
+                <p><strong>Telefon:</strong> @doctor?.PhoneNumber</p>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-clock"></i> Çalışma Saatleri</h5>
+            </div>
+            <div class="card-body">
+                @if (doctor?.WorkingHours != null && doctor.WorkingHours.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Gün</th>
+                                    <th>Saatler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var workingHour in doctor.WorkingHours.Where(wh => wh.IsActive))
+                                {
+                                    <tr>
+                                        <td>@workingHour.DayOfWeek.ToString()</td>
+                                        <td>@workingHour.StartTime.ToString(@"hh\:mm") - @workingHour.EndTime.ToString(@"hh\:mm")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Çalışma saati bilgisi bulunmamaktadır.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="timeSlotsModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Müsait Saatler</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="timeSlotsContainer">
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Yükleniyor...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.view-times').click(function() {
+                var date = $(this).data('date');
+                var doctorId = @doctor?.Id;
+                
+                $('#timeSlotsContainer').html('<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
+                
+                $.get('/Doctor/GetAvailableTimeSlots', { id: doctorId, date: date })
+                    .done(function(data) {
+                        if (data.success && data.slots.length > 0) {
+                            var html = '<div class="row">';
+                            data.slots.forEach(function(slot) {
+                                html += '<div class="col-md-6 mb-2">';
+                                html += '<button class="btn btn-outline-primary w-100 time-slot" data-datetime="' + slot.date + ' ' + slot.time + '">';
+                                html += slot.time;
+                                html += '</button>';
+                                html += '</div>';
+                            });
+                            html += '</div>';
+                            $('#timeSlotsContainer').html(html);
+                        } else {
+                            $('#timeSlotsContainer').html('<div class="alert alert-warning">Bu tarihte müsait saat bulunmamaktadır.</div>');
+                        }
+                    })
+                    .fail(function() {
+                        $('#timeSlotsContainer').html('<div class="alert alert-danger">Saatler yüklenirken hata oluştu.</div>');
+                    });
+                
+                $('#timeSlotsModal').modal('show');
+            });
+            
+            $(document).on('click', '.time-slot', function() {
+                var datetime = $(this).data('datetime');
+                window.location.href = '/Doctor/Book/' + @doctor?.Id + '?datetime=' + encodeURIComponent(datetime);
+            });
+        });
+    </script>
+}

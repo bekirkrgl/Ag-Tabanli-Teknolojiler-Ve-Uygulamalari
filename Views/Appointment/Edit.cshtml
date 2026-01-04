@@ -1,0 +1,83 @@
+@model HastaneRandevuSistemi.Models.Appointment
+
+@{
+    ViewData["Title"] = "Randevu Düzenle";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-warning text-white text-center py-4">
+                    <h2 class="mb-0">
+                        <i class="fas fa-edit me-3"></i>
+                        Randevu Düzenle
+                    </h2>
+                </div>
+                <div class="card-body p-5">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select asp-for="DoctorId" class="form-control" asp-items="ViewBag.DoctorId" id="doctorIdSelect"></select>
+                                    <label for="doctorIdSelect" class="form-label">Doktor <span class="text-danger">*</span></label>
+                                    <span asp-validation-for="DoctorId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select asp-for="PatientId" class="form-control" asp-items="ViewBag.PatientId" id="patientIdSelect"></select>
+                                    <label for="patientIdSelect" class="form-label">Hasta <span class="text-danger">*</span></label>
+                                    <span asp-validation-for="PatientId" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="AppointmentDate" type="date" class="form-control" id="appointmentDateInput" />
+                                    <label for="appointmentDateInput" class="form-label">Randevu Tarihi <span class="text-danger">*</span></label>
+                                    <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="AppointmentTime" type="time" class="form-control" id="appointmentTimeInput" />
+                                    <label for="appointmentTimeInput" class="form-label">Randevu Saati <span class="text-danger">*</span></label>
+                                    <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea asp-for="Notes" class="form-control" placeholder="Randevu Notları" id="notesInput" style="height: 100px;"></textarea>
+                                    <label for="notesInput" class="form-label">Notlar</label>
+                                    <span asp-validation-for="Notes" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check form-switch">
+                                    <input asp-for="IsConfirmed" class="form-check-input" type="checkbox" />
+                                    <label asp-for="IsConfirmed" class="form-check-label">Onaylandı</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-center gap-3 mt-5">
+                            <button type="submit" class="btn btn-warning btn-lg px-5">
+                                <i class="fas fa-save me-2"></i> Güncelle
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-5">
+                                <i class="fas fa-arrow-left me-2"></i> Geri Dön
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

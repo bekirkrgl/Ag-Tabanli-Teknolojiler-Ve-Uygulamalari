@@ -1,0 +1,28 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="d-flex align-items-center" style="display: flex !important; align-items: center !important; visibility: visible !important; opacity: 1 !important;">
+        <span class="text-white me-3" style="color: white !important; margin-right: 1rem !important; display: inline-block !important;">
+            <i class="fas fa-user me-1"></i> Merhaba @User.Identity?.Name!
+        </span>
+        <form class="d-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" style="display: inline !important;">
+            <button type="submit" class="btn btn-outline-light btn-sm" style="font-weight: bold; font-size: 14px; padding: 8px 16px; border: 2px solid #ffffff; color: #ffffff; background: transparent; text-decoration: none; display: inline-block; visibility: visible !important; opacity: 1 !important;">
+                <i class="fas fa-sign-out-alt me-1"></i> Çıkış Yap
+            </button>
+        </form>
+    </div>
+}
+else
+{
+    <div class="d-flex align-items-center gap-2" style="display: flex !important; align-items: center !important; gap: 0.5rem !important; visibility: visible !important; opacity: 1 !important;">
+        <a class="btn btn-outline-light btn-sm" asp-area="Identity" asp-page="/Account/Register" style="font-weight: bold; font-size: 14px; padding: 8px 16px; border: 2px solid #ffffff; color: #ffffff; background: transparent; text-decoration: none; display: inline-block; visibility: visible !important; opacity: 1 !important; min-width: 120px; text-align: center;">
+            <i class="fas fa-user-plus me-1"></i> Kayıt Ol
+        </a>
+        <a class="btn btn-light btn-sm" asp-area="Identity" asp-page="/Account/Login" style="font-weight: bold; font-size: 14px; padding: 8px 16px; border: 2px solid #ffffff; color: #333333; background: #ffffff; text-decoration: none; display: inline-block; visibility: visible !important; opacity: 1 !important; min-width: 120px; text-align: center;">
+            <i class="fas fa-sign-in-alt me-1"></i> Giriş Yap
+        </a>
+    </div>
+}

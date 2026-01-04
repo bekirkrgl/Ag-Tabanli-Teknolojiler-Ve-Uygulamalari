@@ -1,0 +1,68 @@
+@model HastaneRandevuSistemi.Models.Doctor
+
+@{
+    ViewData["Title"] = "Doktor Sil";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-danger text-white text-center py-4">
+                    <h2 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-3"></i>
+                        Doktor Sil
+                    </h2>
+                </div>
+                <div class="card-body p-5">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Dikkat!</strong> Bu doktoru silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-4 text-center">
+                            @if (!string.IsNullOrEmpty(Model.PhotoUrl))
+                            {
+                                <img src="@Model.PhotoUrl" alt="@Model.FullName" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 150px; height: 150px;">
+                                    <i class="fas fa-user-md text-white" style="font-size: 4rem;"></i>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            <h4 class="text-primary mb-3">@Model.FullName</h4>
+                            <p class="mb-2"><strong>E-posta:</strong> @Model.Email</p>
+                            <p class="mb-2"><strong>Telefon:</strong> @Model.PhoneNumber</p>
+                            <p class="mb-2"><strong>Branş:</strong> @Model.Specialization?.Name</p>
+                            <p class="mb-2"><strong>Durum:</strong> 
+                                <span class="badge @(Model.IsActive ? "bg-success" : "bg-danger")">
+                                    @(Model.IsActive ? "Aktif" : "Pasif")
+                                </span>
+                            </p>
+                            @if (!string.IsNullOrEmpty(Model.Biography))
+                            {
+                                <p class="mb-0"><strong>Biyografi:</strong> @Model.Biography</p>
+                            }
+                        </div>
+                    </div>
+
+                    <form asp-action="Delete" class="mt-5">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex justify-content-center gap-3">
+                            <button type="submit" class="btn btn-danger btn-lg px-5">
+                                <i class="fas fa-trash me-2"></i> Evet, Sil
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-5">
+                                <i class="fas fa-arrow-left me-2"></i> İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

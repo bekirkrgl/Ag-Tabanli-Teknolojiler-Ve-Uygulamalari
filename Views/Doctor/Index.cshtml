@@ -1,0 +1,738 @@
+@model IEnumerable<HastaneRandevuSistemi.Models.Doctor>
+
+@{
+    ViewData["Title"] = "Doktorlar";
+}
+
+<style>
+/* ULTRA MODERN DOKTOR SAYFASI CSS */
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Sayfa Header */
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    color: white;
+    padding: 60px 0;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="60" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="70" cy="30" r="1.5" fill="rgba(255,255,255,0.1)"/></svg>');
+    background-size: 50px 50px;
+    animation: float 20s ease-in-out infinite;
+}
+
+@@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.page-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 1rem;
+    text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 2;
+}
+
+.page-subtitle {
+    font-size: 1.3rem;
+    opacity: 0.95;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 2;
+    font-weight: 300;
+}
+
+/* Filtre ve Arama Bölümü */
+.filter-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.filter-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.search-box {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 15px 50px 15px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 15px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.search-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #667eea;
+    font-size: 1.2rem;
+}
+
+.specialization-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.filter-chip {
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.filter-chip:hover,
+.filter-chip.active {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* Doktor Kartları */
+.doctors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.doctor-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 2.5rem;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    height: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.doctor-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.doctor-card:hover::before {
+    transform: scaleX(1);
+}
+
+.doctor-card:hover {
+    transform: translateY(-12px) scale(1.03);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+}
+
+.doctor-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    font-size: 3rem;
+    color: white;
+    transition: all 0.4s ease;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.doctor-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    transition: all 0.4s ease;
+}
+
+.doctor-card:hover .doctor-avatar {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 20px 50px rgba(102, 126, 234, 0.6);
+}
+
+.doctor-card:hover .doctor-avatar img {
+    transform: scale(1.1);
+}
+
+.doctor-name {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #2d3748;
+    margin-bottom: 0.8rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.doctor-specialization {
+    font-size: 1.2rem;
+    color: #667eea;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 20px;
+    display: inline-flex;
+}
+
+.doctor-info {
+    margin-bottom: 2rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 0.8rem;
+    color: #718096;
+    font-size: 1rem;
+}
+
+.info-item i {
+    color: #667eea;
+    width: 20px;
+}
+
+.doctor-bio {
+    background: rgba(248, 250, 252, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(226, 232, 240, 0.5);
+    font-style: italic;
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.doctor-stats {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 15px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-item i {
+    color: #667eea;
+    font-size: 1.2rem;
+}
+
+.stat-item span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.doctor-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-modern {
+    padding: 14px 24px;
+    border-radius: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    position: relative;
+    overflow: hidden;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.btn-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-modern:hover::before {
+    left: 100%;
+}
+
+.btn-modern:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+}
+
+.btn-primary-modern {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-outline-modern {
+    background: rgba(255, 255, 255, 0.8);
+    color: #667eea;
+    border: 2px solid #667eea;
+    backdrop-filter: blur(10px);
+}
+
+.btn-outline-modern:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.btn-success-modern {
+    background: linear-gradient(135deg, #48bb78, #68d391);
+    color: white;
+    box-shadow: 0 8px 25px rgba(72, 187, 120, 0.3);
+}
+
+.btn-success-modern:hover {
+    background: linear-gradient(135deg, #68d391, #48bb78);
+    color: white;
+}
+
+/* Boş Durum */
+.empty-state {
+    text-align: center;
+    padding: 5rem 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+}
+
+.empty-icon {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    font-size: 4rem;
+    color: white;
+    box-shadow: 0 20px 50px rgba(102, 126, 234, 0.4);
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Animasyonlar */
+.fade-in {
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.8s ease-out;
+}
+
+@@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.8s ease-out;
+}
+
+@@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Responsive Design */
+@@media (max-width: 768px) {
+    .page-header {
+        padding: 40px 0;
+        margin-bottom: 30px;
+    }
+    
+    .page-title {
+        font-size: 2.5rem;
+    }
+    
+    .page-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .filter-section {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .doctors-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .doctor-card {
+        padding: 2rem;
+    }
+    
+    .doctor-avatar {
+        width: 100px;
+        height: 100px;
+        font-size: 2.5rem;
+    }
+    
+    .doctor-name {
+        font-size: 1.5rem;
+    }
+    
+    .doctor-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-modern {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+/* Özel Efektler */
+.doctor-card:nth-child(odd) {
+    animation-delay: 0.1s;
+}
+
+.doctor-card:nth-child(even) {
+    animation-delay: 0.2s;
+}
+
+.doctor-card:nth-child(3n) {
+    animation-delay: 0.3s;
+}
+
+/* Hover Efektleri */
+.doctor-card:hover .doctor-name {
+    animation: nameGlow 0.6s ease-in-out;
+}
+
+@@keyframes nameGlow {
+    0%, 100% { text-shadow: 0 0 5px rgba(102, 126, 234, 0.3); }
+    50% { text-shadow: 0 0 20px rgba(102, 126, 234, 0.6); }
+}
+</style>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="page-title fade-in">
+                    <i class="fas fa-user-md me-3"></i>
+                    👨‍⚕️ Uzman Doktorlarımız
+                </h1>
+                <p class="page-subtitle fade-in">
+                    Deneyimli ve uzman doktorlarımızla tanışın, sağlığınızı güvence altına alın
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a asp-action="Create" class="btn btn-success-modern btn-modern fade-in">
+                    <i class="fas fa-plus"></i>
+                    ➕ Yeni Doktor Ekle
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FİLTRE VE ARAMA BÖLÜMÜ -->
+<div class="container">
+    <div class="filter-section fade-in">
+        <h3 class="filter-title">
+            <i class="fas fa-filter"></i>
+            Doktor Filtreleme
+        </h3>
+        
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="Doktor adı, branş veya uzmanlık alanı ara...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        
+        <div class="specialization-filter">
+            <div class="filter-chip active" data-specialization="all">Tümü</div>
+            <div class="filter-chip" data-specialization="Kardiyoloji">Kardiyoloji</div>
+            <div class="filter-chip" data-specialization="Çocuk Sağlığı">Çocuk Sağlığı</div>
+            <div class="filter-chip" data-specialization="Ortopedi">Ortopedi</div>
+            <div class="filter-chip" data-specialization="Kadın Hastalıkları">Kadın Hastalıkları</div>
+            <div class="filter-chip" data-specialization="Göz Hastalıkları">Göz Hastalıkları</div>
+            <div class="filter-chip" data-specialization="Dermatoloji">Dermatoloji</div>
+        </div>
+    </div>
+</div>
+
+<!-- DOKTORLAR GRİD -->
+<div class="container">
+    @if (Model.Any())
+    {
+        <div class="doctors-grid" id="doctorsGrid">
+            @foreach (var doctor in Model)
+            {
+                <div class="doctor-card fade-in" data-specialization="@doctor.Specialization?.Name" data-name="@doctor.FullName.ToLower()">
+                    <div class="doctor-avatar">
+                        @if (!string.IsNullOrEmpty(doctor.PhotoUrl))
+                        {
+                            <img src="@doctor.PhotoUrl" alt="@doctor.FullName" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <i class="fas fa-user-md" style="display: none;"></i>
+                        }
+                        else
+                        {
+                            <i class="fas fa-user-md"></i>
+                        }
+                    </div>
+                    
+                    <h3 class="doctor-name">Dr. @doctor.FullName</h3>
+                    <div class="doctor-specialization">
+                        <i class="fas fa-stethoscope"></i>
+                        @doctor.Specialization?.Name
+                    </div>
+                    
+                    <div class="doctor-info">
+                        @if (!string.IsNullOrEmpty(doctor.Email))
+                        {
+                            <div class="info-item">
+                                <i class="fas fa-envelope"></i>
+                                @doctor.Email
+                            </div>
+                        }
+                        @if (!string.IsNullOrEmpty(doctor.PhoneNumber))
+                        {
+                            <div class="info-item">
+                                <i class="fas fa-phone"></i>
+                                @doctor.PhoneNumber
+                            </div>
+                        }
+                        <div class="info-item">
+                            <i class="fas fa-calendar-plus"></i>
+                            @doctor.CreatedDate.ToString("dd MMMM yyyy")
+                        </div>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(doctor.Biography))
+                    {
+                        <div class="doctor-bio">
+                            <i class="fas fa-quote-left me-2"></i>
+                            @(doctor.Biography.Length > 120 ? doctor.Biography.Substring(0, 120) + "..." : doctor.Biography)
+                        </div>
+                    }
+                    
+                    <div class="doctor-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-star"></i>
+                            <span>4.9</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-users"></i>
+                            <span>500+</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-clock"></i>
+                            <span>5 yıl</span>
+                        </div>
+                    </div>
+                    
+                    <div class="doctor-actions">
+                        <a asp-action="Details" asp-route-id="@doctor.Id" class="btn-modern btn-primary-modern">
+                            <i class="fas fa-eye"></i>
+                            👁️ Detaylar
+                        </a>
+                        <a asp-action="Edit" asp-route-id="@doctor.Id" class="btn-modern btn-outline-modern">
+                            <i class="fas fa-edit"></i>
+                            ✏️ Düzenle
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state fade-in">
+            <div class="empty-icon">
+                <i class="fas fa-user-md"></i>
+            </div>
+            <h3 class="mt-3">Henüz doktor bilgisi bulunmamaktadır</h3>
+            <p class="text-muted">Yakında eklenecek...</p>
+            <a asp-action="Create" class="btn btn-success-modern btn-modern mt-3">
+                <i class="fas fa-plus"></i>
+                ➕ İlk Doktoru Ekle
+            </a>
+        </div>
+    }
+</div>
+
+<script>
+// Sayfa yüklendiğinde animasyonları başlat
+document.addEventListener('DOMContentLoaded', function() {
+    // Fade-in animasyonları için gecikme ekle
+    const fadeElements = document.querySelectorAll('.fade-in');
+    fadeElements.forEach((element, index) => {
+        element.style.animationDelay = `${index * 0.1}s`;
+    });
+    
+    // Arama fonksiyonu
+    const searchInput = document.getElementById('searchInput');
+    const doctorCards = document.querySelectorAll('.doctor-card');
+    
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        doctorCards.forEach(card => {
+            const doctorName = card.dataset.name;
+            const specialization = card.dataset.specialization?.toLowerCase() || '';
+            
+            if (doctorName.includes(searchTerm) || specialization.includes(searchTerm)) {
+                card.style.display = 'block';
+                card.style.animation = 'fadeIn 0.5s ease-in-out';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+    
+    // Branş filtresi
+    const filterChips = document.querySelectorAll('.filter-chip');
+    
+    filterChips.forEach(chip => {
+        chip.addEventListener('click', function() {
+            // Aktif chip'i güncelle
+            filterChips.forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+            
+            const selectedSpecialization = this.dataset.specialization;
+            
+            doctorCards.forEach(card => {
+                const cardSpecialization = card.dataset.specialization;
+                
+                if (selectedSpecialization === 'all' || cardSpecialization === selectedSpecialization) {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeIn 0.5s ease-in-out';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+    
+    // Hover efektleri için ekstra animasyonlar
+    const doctorCards = document.querySelectorAll('.doctor-card');
+    doctorCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-12px) scale(1.03)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+    
+    // Scroll animasyonları
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animation = 'fadeIn 0.8s ease-in-out';
+            }
+        });
+    }, observerOptions);
+    
+    doctorCards.forEach(card => {
+        observer.observe(card);
+    });
+});
+</script>

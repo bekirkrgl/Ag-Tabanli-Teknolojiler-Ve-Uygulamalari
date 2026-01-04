@@ -1,0 +1,86 @@
+@model HastaneRandevuSistemi.Models.Patient
+
+@{
+    ViewData["Title"] = "Hasta Sil";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4><i class="fas fa-exclamation-triangle"></i> Hasta Sil</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <h5><i class="fas fa-warning"></i> Dikkat!</h5>
+                    <p>Bu işlem geri alınamaz. Hasta silindiğinde:</p>
+                    <ul>
+                        <li>Hasta pasif duruma getirilecek</li>
+                        <li>Mevcut randevular etkilenmeyecek</li>
+                        <li>Hasta verileri korunacak</li>
+                    </ul>
+                </div>
+                
+                <h5>Silinecek Hasta Bilgileri:</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Ad Soyad:</strong> @Model.FullName</p>
+                        <p><strong>E-posta:</strong> @Model.Email</p>
+                        <p><strong>Telefon:</strong> @Model.PhoneNumber</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>TC Kimlik No:</strong> @Model.TcNumber</p>
+                        <p><strong>Durum:</strong> 
+                            <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary")">
+                                @(Model.IsActive ? "Aktif" : "Pasif")
+                            </span>
+                        </p>
+                        <p><strong>Kayıt Tarihi:</strong> @Model.CreatedDate.ToString("dd.MM.yyyy")</p>
+                    </div>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.Address))
+                {
+                    <hr>
+                    <p><strong>Adres:</strong></p>
+                    <p class="text-muted">@Model.Address</p>
+                }
+                
+                <form asp-action="Delete" class="mt-4">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Evet, Sil
+                        </button>
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info">
+                            <i class="fas fa-eye"></i> Detaylar
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> İptal
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-info-circle"></i> Bilgi</h5>
+            </div>
+            <div class="card-body">
+                <p>Hasta silme işlemi:</p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success"></i> Soft delete yapılır</li>
+                    <li><i class="fas fa-check text-success"></i> Veriler korunur</li>
+                    <li><i class="fas fa-check text-success"></i> Geri alınabilir</li>
+                </ul>
+                <hr>
+                <p class="text-muted">
+                    <small>Eğer hastanın aktif randevuları varsa, önce bunları kontrol etmeniz önerilir.</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

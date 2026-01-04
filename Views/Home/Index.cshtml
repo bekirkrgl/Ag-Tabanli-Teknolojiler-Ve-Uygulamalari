@@ -1,0 +1,1284 @@
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center;">
+                <i class="fas fa-exclamation-triangle" style="margin-right: 10px; font-size: 1.2em;"></i>
+                <strong>@TempData["ErrorMessage"]</strong>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center;">
+                <i class="fas fa-check-circle" style="margin-right: 10px; font-size: 1.2em;"></i>
+                <strong>@TempData["SuccessMessage"]</strong>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+@if (TempData["DebugInfo"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert" style="margin: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center;">
+                <i class="fas fa-info-circle" style="margin-right: 10px; font-size: 1.2em;"></i>
+                <strong>Debug: @TempData["DebugInfo"]</strong>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f5f5f5;
+}
+
+/* Ana sayfa hero section'ı için margin ayarı */
+.hero-section {
+    margin-top: 60px !important;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #48bb78 0%, #68d391 100%);
+    min-height: 40vh;
+    display: flex;
+    align-items: center;
+    color: white;
+    padding: 20px 0;
+}
+
+.hero-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-hero {
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: white;
+    color: #48bb78;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    color: #48bb78;
+}
+
+.btn-outline {
+    background: transparent;
+    color: white;
+    border: 3px solid white;
+}
+
+.btn-outline:hover {
+    background: white;
+    color: #48bb78;
+    transform: translateY(-3px);
+}
+
+.quick-access {
+    padding: 40px 0;
+    background: white;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 3rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.section-subtitle {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    color: inherit;
+}
+
+.card-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2rem;
+    color: white;
+}
+
+/* Icon görünürlüğünü artır */
+.card-icon i {
+    font-size: 2.5rem !important;
+    color: white !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Font Awesome iconları için ekstra güvenlik */
+.fas, .far, .fab, .fal, .fa {
+    font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "Font Awesome 6 Brands" !important;
+    font-weight: 900 !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    text-rendering: auto !important;
+    line-height: 1 !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Sosyal medya iconları için özel kurallar */
+.social-link i {
+    font-size: 20px !important;
+    color: white !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3) !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transition: all 0.3s ease !important;
+}
+
+.social-link:hover i {
+    transform: scale(1.1) !important;
+    color: white !important;
+}
+
+/* Emoji fallback stilleri */
+.emoji-fallback {
+    font-size: 20px !important;
+    display: none !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Proje raporu kartlarındaki emoji fallback'leri */
+.card-icon .emoji-fallback {
+    font-size: 3.5rem !important;
+    line-height: 1 !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    visibility: hidden !important;
+}
+
+/* Sosyal medya emoji fallback'leri */
+.social-link .emoji-fallback {
+    font-size: 28px !important;
+    display: none !important;
+}
+
+.social-link:hover .emoji-fallback {
+    transform: scale(1.1) !important;
+}
+
+.icon-primary { background: linear-gradient(135deg, #667eea, #764ba2); }
+.icon-info { background: linear-gradient(135deg, #4299e1, #63b3ed); }
+.icon-success { background: linear-gradient(135deg, #48bb78, #68d391); }
+.icon-warning { background: linear-gradient(135deg, #ed8936, #f6ad55); }
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* MODERN DOCTOR CARDS */
+.doctor-card-modern {
+    background: white;
+    border-radius: 24px;
+    padding: 0;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    height: 100%;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.doctor-card-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.doctor-card-modern:hover::before {
+    transform: scaleX(1);
+}
+
+.doctor-card-modern:hover {
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+}
+
+.doctor-card-header {
+    position: relative;
+    padding: 1.5rem 1.5rem 1rem;
+    text-align: center;
+}
+
+.doctor-avatar-modern {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 2.5rem;
+    color: white;
+    transition: all 0.3s ease;
+    position: relative;
+    border: 3px solid white;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    overflow: hidden;
+}
+
+.doctor-avatar-modern img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.doctor-card-modern:hover .doctor-avatar-modern {
+    transform: scale(1.1);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+}
+
+.doctor-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.online {
+    background: linear-gradient(135deg, #48bb78, #68d391);
+    color: white;
+    box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+}
+
+.doctor-info {
+    padding: 0 1.5rem 1rem;
+    text-align: center;
+}
+
+.doctor-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+}
+
+.doctor-specialization {
+    color: #667eea;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.doctor-bio {
+    color: #718096;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    min-height: 50px;
+}
+
+.doctor-stats {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.stat-item i {
+    color: #667eea;
+    font-size: 1rem;
+}
+
+.stat-item span {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.doctor-actions {
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+}
+
+.btn-doctor {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-details {
+    background: #f8fafc;
+    color: #4a5568;
+    border: 2px solid #e2e8f0;
+}
+
+.btn-details:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-appointment {
+    background: linear-gradient(135deg, #48bb78, #68d391);
+    color: white;
+    border: 2px solid transparent;
+}
+
+.btn-appointment:hover {
+    background: linear-gradient(135deg, #38a169, #48bb78);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+}
+
+.btn-view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 36px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.btn-view-all:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-view-all i:last-child {
+    transition: transform 0.3s ease;
+}
+
+.btn-view-all:hover i:last-child {
+    transform: translateX(5px);
+}
+
+/* HORIZONTAL SCROLL CONTAINERS */
+.doctors-scroll-container {
+    position: relative;
+    margin: 0.5rem 0;
+    padding: 0 100px;
+}
+
+.doctors-scroll-wrapper {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 0.3rem 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.doctors-scroll-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
+.doctor-card-horizontal {
+    flex: 0 0 300px;
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem 1.2rem;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+}
+
+.doctor-card-horizontal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.doctor-card-horizontal:hover::before {
+    transform: scaleX(1);
+}
+
+.doctor-card-horizontal:hover {
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+}
+
+/* SCROLL NAVIGATION BUTTONS */
+.scroll-navigation {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    z-index: 100;
+    padding: 0 30px;
+    left: 0;
+    right: 0;
+}
+
+.scroll-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: 3px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+    pointer-events: all;
+    z-index: 200;
+    opacity: 0.95;
+    position: relative;
+}
+
+.scroll-btn:hover {
+    transform: scale(1.15);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+    opacity: 1;
+}
+
+.scroll-btn:active {
+    transform: scale(0.9);
+}
+
+.scroll-left {
+    position: absolute;
+    left: 20px;
+}
+
+.scroll-right {
+    position: absolute;
+    right: 20px;
+}
+
+
+
+@@media (max-width: 768px) {
+    .hero-section {
+        min-height: 50vh;
+        padding: 30px 0;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 25px;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .btn-hero {
+        width: 100%;
+        max-width: 280px;
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    
+    /* Modern Doctor Cards Mobile */
+    .doctor-card-modern {
+        margin-bottom: 1.5rem;
+    }
+    
+    .doctor-card-header {
+        padding: 1.5rem 1.5rem 1rem;
+    }
+    
+    .doctor-avatar-modern {
+        width: 100px;
+        height: 100px;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .doctor-info {
+        padding: 0 1.5rem 1rem;
+    }
+    
+    .doctor-name {
+        font-size: 1.3rem;
+    }
+    
+    .doctor-specialization {
+        font-size: 0.9rem;
+    }
+    
+    .doctor-bio {
+        font-size: 0.9rem;
+        min-height: 50px;
+    }
+    
+    .doctor-stats {
+        gap: 1rem;
+        padding: 0.8rem;
+    }
+    
+    .stat-item span {
+        font-size: 0.8rem;
+    }
+    
+    .doctor-actions {
+        padding: 1rem 1.5rem 1.5rem;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .btn-doctor {
+        padding: 14px 20px;
+        font-size: 0.95rem;
+    }
+    
+    .btn-view-all {
+        padding: 15px 25px;
+        font-size: 1rem;
+    }
+    
+    .featured-doctors {
+        padding: 30px 0 !important;
+    }
+    
+    .featured-doctors h2 {
+        font-size: 1.5rem !important;
+    }
+    
+    .featured-doctors p {
+        font-size: 1.1rem !important;
+    }
+    
+    /* Modern Specialization Cards Mobile */
+}
+
+/* MOBILE RESPONSIVE FOR HORIZONTAL SCROLL */
+@@media (max-width: 768px) {
+    .doctors-scroll-container {
+        padding: 0 80px;
+    }
+    
+    .doctor-card-horizontal {
+        flex: 0 0 280px;
+        padding: 1.5rem 1.2rem;
+    }
+    
+    .scroll-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+        border: 2px solid white;
+    }
+    
+    .scroll-navigation {
+        padding: 0 20px;
+    }
+    
+    .scroll-left {
+        position: absolute;
+        left: 15px;
+    }
+    
+    .scroll-right {
+        position: absolute;
+        right: 15px;
+    }
+    
+    .doctor-avatar-modern {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+    }
+    
+}
+</style>
+
+<script>
+// Horizontal Scroll Functions
+function scrollDoctors(direction) {
+    const container = document.getElementById('doctorsScroll');
+    const scrollAmount = 400;
+    
+    if (direction === 'left') {
+        container.scrollBy({
+            left: -scrollAmount,
+            behavior: 'smooth'
+        });
+    } else {
+        container.scrollBy({
+            left: scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+}
+
+
+// Touch support for mobile
+document.addEventListener('DOMContentLoaded', function() {
+    const doctorsContainer = document.getElementById('doctorsScroll');
+    
+    if (doctorsContainer) {
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+        
+        doctorsContainer.addEventListener('mousedown', (e) => {
+            isDown = true;
+            doctorsContainer.classList.add('active');
+            startX = e.pageX - doctorsContainer.offsetLeft;
+            scrollLeft = doctorsContainer.scrollLeft;
+        });
+        
+        doctorsContainer.addEventListener('mouseleave', () => {
+            isDown = false;
+            doctorsContainer.classList.remove('active');
+        });
+        
+        doctorsContainer.addEventListener('mouseup', () => {
+            isDown = false;
+            doctorsContainer.classList.remove('active');
+        });
+        
+        doctorsContainer.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - doctorsContainer.offsetLeft;
+            const walk = (x - startX) * 2;
+            doctorsContainer.scrollLeft = scrollLeft - walk;
+        });
+    }
+    
+    // Font Awesome yüklenme kontrolü
+    setTimeout(function() {
+        const testIcon = document.querySelector('.fas');
+        if (testIcon) {
+            const computedStyle = window.getComputedStyle(testIcon);
+            const fontFamily = computedStyle.getPropertyValue('font-family');
+            
+            if (!fontFamily.includes('Font Awesome')) {
+                console.warn('Font Awesome yüklenemedi!');
+                // Fallback: Emoji iconları göster
+                document.querySelectorAll('.fas').forEach(icon => {
+                    const iconClass = icon.className;
+                    if (iconClass.includes('fa-bullseye')) icon.innerHTML = '🎯';
+                    else if (iconClass.includes('fa-user')) icon.innerHTML = '👤';
+                    else if (iconClass.includes('fa-user-md')) icon.innerHTML = '👨‍⚕️';
+                    else if (iconClass.includes('fa-clipboard-list')) icon.innerHTML = '📋';
+                    else if (iconClass.includes('fa-clock')) icon.innerHTML = '⏰';
+                    else if (iconClass.includes('fa-check-circle')) icon.innerHTML = '✅';
+                    else if (iconClass.includes('fa-check-double')) icon.innerHTML = '✅';
+                    else if (iconClass.includes('fa-times-circle')) icon.innerHTML = '❌';
+                    else if (iconClass.includes('fa-exclamation-triangle')) icon.innerHTML = '⚠️';
+                });
+                
+                // Sosyal medya iconları için fallback
+                document.querySelectorAll('.fab').forEach(icon => {
+                    const iconClass = icon.className;
+                    if (iconClass.includes('fa-facebook-f')) {
+                        icon.style.display = 'none';
+                        icon.nextElementSibling.style.display = 'inline';
+                    }
+                    else if (iconClass.includes('fa-twitter')) {
+                        icon.style.display = 'none';
+                        icon.nextElementSibling.style.display = 'inline';
+                    }
+                    else if (iconClass.includes('fa-instagram')) {
+                        icon.style.display = 'none';
+                        icon.nextElementSibling.style.display = 'inline';
+                    }
+                    else if (iconClass.includes('fa-linkedin-in')) {
+                        icon.style.display = 'none';
+                        icon.nextElementSibling.style.display = 'inline';
+                    }
+                });
+            } else {
+                console.log('Font Awesome başarıyla yüklendi!');
+            }
+        }
+    }, 1000);
+});
+</script>
+
+<!-- GİRİŞ BUTONLARI - HASTA VE DOKTOR İÇİN AYRI -->
+<div style="position: fixed; top: 0; left: 0; right: 0; z-index: 99999; width: 100%; height: 60px; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); display: block; visibility: visible; opacity: 1; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+    <div style="position: absolute; top: 50%; right: 20px; transform: translateY(-50%); display: flex; gap: 12px; align-items: center;">
+        <!-- Hasta Girişi -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+            <a href="/Identity/Account/Login?role=Patient" style="display: inline-block; padding: 8px 16px; background: linear-gradient(135deg, #48bb78 0%, #68d391 100%); color: white; border: none; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 12px; min-width: 100px; text-align: center; box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(72, 187, 120, 0.6)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(72, 187, 120, 0.4)'">
+                👤 Hasta Girişi
+            </a>
+        </div>
+        
+        <!-- Doktor Girişi -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+            <a href="/Identity/Account/Login?role=Doctor" style="display: inline-block; padding: 8px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 12px; min-width: 100px; text-align: center; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(102, 126, 234, 0.6)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(102, 126, 234, 0.4)'">
+                👨‍⚕️ Doktor Girişi
+            </a>
+        </div>
+        
+        <!-- Kayıt Ol -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+            <a href="/Identity/Account/Register" style="display: inline-block; padding: 8px 16px; background: linear-gradient(135deg, #ed8936 0%, #f6ad55 100%); color: white; border: none; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 12px; min-width: 100px; text-align: center; box-shadow: 0 4px 15px rgba(237, 137, 54, 0.4); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(237, 137, 54, 0.6)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(237, 137, 54, 0.4)'">
+                📝 Kayıt Ol
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- HATA MESAJI -->
+@if (TempData["ErrorMessage"] != null)
+{
+    <div style="position: fixed; top: 60px; left: 0; right: 0; z-index: 99998; padding: 15px; background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 18px;"></i>
+            <span style="font-weight: 600; font-size: 16px;">@TempData["ErrorMessage"]</span>
+            <button onclick="this.parentElement.parentElement.style.display='none'" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer; margin-left: 10px;">&times;</button>
+        </div>
+    </div>
+}
+
+<!-- HERO SECTION -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <i class="fas fa-hospital" style="margin-right: 15px; color: white;"></i>
+                Hastane Randevu Sistemi
+            </h1>
+            <p class="hero-subtitle">
+                <strong>HASTANE YÖNETİM SİSTEMİ</strong><br>
+                Modern teknoloji ile sağlık hizmetlerinize kolay erişim sağlayan kapsamlı hastane yönetim sistemi.<br>
+                Doktorlarınızı keşfedin, randevu alın ve sağlığınızı öncelik haline getirin.
+            </p>
+            <div class="hero-buttons">
+                <a href="/Appointment/Create" class="btn-hero btn-primary">
+                    <i class="fas fa-calendar-plus" style="margin-right: 8px;"></i>
+                    Randevu Al
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PROJE RAPORU BÖLÜMÜ -->
+<section class="quick-access">
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-clipboard-list" style="margin-right: 15px; color: #667eea;"></i>
+            Proje Raporu
+            <!-- Test Icons -->
+            <span style="margin-left: 20px; font-size: 0.8em;">
+                <i class="fas fa-heart" style="color: red; margin-right: 5px;"></i>
+                <i class="fas fa-star" style="color: gold; margin-right: 5px;"></i>
+                <i class="fas fa-check" style="color: green;"></i>
+            </span>
+        </h2>
+        <p class="section-subtitle">Hastane Yönetim Sistemi - Detaylı Proje Bilgileri</p>
+        
+        <div class="cards-grid">
+            <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="card-icon" style="background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; position: relative;">
+                    <span style="font-size: 3.5rem; line-height: 1;">🎯</span>
+                </div>
+                <h3 class="card-title" style="color: white;">Projenin Amacı</h3>
+                <p class="card-text" style="color: rgba(255,255,255,0.9);">Kullanıcıların doktorların müsaitlik durumlarını görebildiği ve uygun tarihlerde randevu alabileceği web tabanlı hastane sistemi geliştirmek.</p>
+            </div>
+            
+            <div class="card" style="background: linear-gradient(135deg, #48bb78 0%, #68d391 100%); color: white;">
+                <div class="card-icon" style="background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; position: relative;">
+                    <span style="font-size: 3.5rem; line-height: 1;">👤</span>
+                </div>
+                <h3 class="card-title" style="color: white;">Hasta Süreci</h3>
+                <p class="card-text" style="color: rgba(255,255,255,0.9);">1️⃣ Hasta girişi yap → 2️⃣ Doktor seç → 3️⃣ Müsaitlik kontrol et → 4️⃣ Randevu talep et → 5️⃣ Doktor onayını bekle</p>
+            </div>
+            
+            <div class="card" style="background: linear-gradient(135deg, #ed8936 0%, #f6ad55 100%); color: white;">
+                <div class="card-icon" style="background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; position: relative;">
+                    <span style="font-size: 3.5rem; line-height: 1;">👨‍⚕️</span>
+                </div>
+                <h3 class="card-title" style="color: white;">Doktor Süreci</h3>
+                <p class="card-text" style="color: rgba(255,255,255,0.9);">1️⃣ Doktor girişi yap → 2️⃣ Gelen randevu taleplerini gör → 3️⃣ Onayla/Reddet → 4️⃣ Müsaitlik durumunu güncelle</p>
+            </div>
+            
+            <div class="card" style="background: linear-gradient(135deg, #4299e1 0%, #63b3ed 100%); color: white;">
+                <div class="card-icon" style="background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; position: relative;">
+                    <span style="font-size: 3.5rem; line-height: 1;">📋</span>
+                </div>
+                <h3 class="card-title" style="color: white;">Randevu Durumları</h3>
+                <div style="color: rgba(255,255,255,0.9); text-align: left; line-height: 1.8;">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <i class="fas fa-clock" style="color: #ffd700; margin-right: 10px; font-size: 1.2rem;"></i>
+                        <span>Planlandı</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <i class="fas fa-check-circle" style="color: #00ff00; margin-right: 10px; font-size: 1.2rem;"></i>
+                        <span>Onaylandı</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <i class="fas fa-check-double" style="color: #00ff00; margin-right: 10px; font-size: 1.2rem;"></i>
+                        <span>Tamamlandı</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <i class="fas fa-times-circle" style="color: #ff0000; margin-right: 10px; font-size: 1.2rem;"></i>
+                        <span>İptal Edildi</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-exclamation-triangle" style="color: #ffa500; margin-right: 10px; font-size: 1.2rem;"></i>
+                        <span>Gelmedi</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+            
+            <!-- Randevu Süreci Açıklaması -->
+            <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 15px; border-left: 5px solid #667eea;">
+                <h4 style="color: #2d3748; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-question-circle" style="color: #667eea; font-size: 1.2rem;"></i>
+                    Randevu Süreci Nasıl Çalışır?
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; text-align: left;">
+                    <div style="background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h5 style="color: #48bb78; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-user" style="color: #48bb78; font-size: 1.1rem;"></i>
+                            Hasta Tarafı:
+                        </h5>
+                        <ol style="color: #4a5568; font-size: 14px; line-height: 1.6;">
+                            <li>Hasta girişi yap</li>
+                            <li>Doktor seç ve müsaitlik kontrol et</li>
+                            <li>Randevu talep et</li>
+                            <li>Doktor onayını bekle</li>
+                        </ol>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h5 style="color: #667eea; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-user-md" style="color: #667eea; font-size: 1.1rem;"></i>
+                            Doktor Tarafı:
+                        </h5>
+                        <ol style="color: #4a5568; font-size: 14px; line-height: 1.6;">
+                            <li>Doktor girişi yap</li>
+                            <li>Gelen randevu taleplerini gör</li>
+                            <li>Onayla veya reddet</li>
+                            <li>Müsaitlik durumunu güncelle</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER SECTION -->
+<footer class="modern-footer" style="background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%); color: white; padding: 60px 0 20px; margin-top: 80px; position: relative; overflow: hidden;">
+    <!-- Background Pattern -->
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.1; background-image: url('data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;><circle cx=&quot;25&quot; cy=&quot;25&quot; r=&quot;1&quot; fill=&quot;white&quot;/><circle cx=&quot;75&quot; cy=&quot;75&quot; r=&quot;1&quot; fill=&quot;white&quot;/><circle cx=&quot;50&quot; cy=&quot;10&quot; r=&quot;0.5&quot; fill=&quot;white&quot;/><circle cx=&quot;10&quot; cy=&quot;60&quot; r=&quot;0.5&quot; fill=&quot;white&quot;/><circle cx=&quot;90&quot; cy=&quot;40&quot; r=&quot;0.5&quot; fill=&quot;white&quot;/></svg>'); background-size: 50px 50px;"></div>
+    
+    <div class="container" style="position: relative; z-index: 2;">
+        <div class="row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px; align-items: start; justify-items: center;">
+            <!-- Hastane Bilgileri -->
+            <div class="footer-column" style="min-width: 250px; text-align: left;">
+                <div class="footer-logo" style="margin-bottom: 20px;">
+                    <h3 style="color: #48bb78; font-size: 1.8rem; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-hospital" style="font-size: 2rem; color: #48bb78;"></i>
+                        Hastane Randevu Sistemi
+                    </h3>
+                </div>
+                <p style="color: #cbd5e0; line-height: 1.6; margin-bottom: 20px; font-size: 0.95rem; text-align: left;">
+                    Modern teknoloji ile sağlık hizmetlerinizi kolayca yönetin. 
+                    Güvenilir doktorlarımızla randevu alın, sağlığınızı önceliğimiz yapın.
+                </p>
+                <div class="social-links" style="display: flex; gap: 15px; justify-content: flex-start;">
+                    <a href="#" class="social-link facebook" style="width: 45px; height: 45px; background: linear-gradient(135deg, #3b5998, #4c70ba); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s ease; font-size: 18px; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 15px rgba(59, 89, 152, 0.3);">
+                        <i class="fab fa-facebook-f" style="font-size: 20px; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);"></i>
+                        <span class="emoji-fallback" style="display: none; font-size: 28px;">📘</span>
+                    </a>
+                    <a href="#" class="social-link twitter" style="width: 45px; height: 45px; background: linear-gradient(135deg, #1da1f2, #0d8bd9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s ease; font-size: 18px; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 15px rgba(29, 161, 242, 0.3);">
+                        <i class="fab fa-twitter" style="font-size: 20px; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);"></i>
+                        <span class="emoji-fallback" style="display: none; font-size: 28px;">🐦</span>
+                    </a>
+                    <a href="#" class="social-link instagram" style="width: 45px; height: 45px; background: linear-gradient(135deg, #e4405f, #c13584); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s ease; font-size: 18px; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 15px rgba(228, 64, 95, 0.3);">
+                        <i class="fab fa-instagram" style="font-size: 20px; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);"></i>
+                        <span class="emoji-fallback" style="display: none; font-size: 28px;">📷</span>
+                    </a>
+                    <a href="#" class="social-link linkedin" style="width: 45px; height: 45px; background: linear-gradient(135deg, #0077b5, #005885); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s ease; font-size: 18px; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 15px rgba(0, 119, 181, 0.3);">
+                        <i class="fab fa-linkedin-in" style="font-size: 20px; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);"></i>
+                        <span class="emoji-fallback" style="display: none; font-size: 28px;">💼</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Hızlı Linkler -->
+            <div class="footer-column" style="min-width: 200px; text-align: left;">
+                <h4 style="color: white; font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-link" style="color: #48bb78; font-size: 1.1rem;"></i>
+                    Hızlı Linkler
+                </h4>
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                    <li style="margin-bottom: 12px;">
+                        <a asp-controller="Home" asp-action="Index" style="color: #cbd5e0; text-decoration: none; transition: color 0.3s ease; display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+                            <i class="fas fa-home" style="color: #48bb78; width: 16px; font-size: 14px;"></i>
+                            Ana Sayfa
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <a asp-controller="Doctor" asp-action="Index" style="color: #cbd5e0; text-decoration: none; transition: color 0.3s ease; display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+                            <i class="fas fa-user-md" style="color: #48bb78; width: 16px; font-size: 14px;"></i>
+                            Doktorlar
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <a asp-controller="Appointment" asp-action="Index" style="color: #cbd5e0; text-decoration: none; transition: color 0.3s ease; display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+                            <i class="fas fa-calendar-alt" style="color: #48bb78; width: 16px; font-size: 14px;"></i>
+                            Randevularım
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <a asp-controller="Home" asp-action="Privacy" style="color: #cbd5e0; text-decoration: none; transition: color 0.3s ease; display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+                            <i class="fas fa-shield-alt" style="color: #48bb78; width: 16px; font-size: 14px;"></i>
+                            Gizlilik Politikası
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- İletişim Bilgileri -->
+            <div class="footer-column" style="min-width: 250px; text-align: left;">
+                <h4 style="color: white; font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-phone" style="color: #48bb78; font-size: 1.1rem;"></i>
+                    İletişim
+                </h4>
+                <div class="contact-info" style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 12px; color: #cbd5e0;">
+                        <i class="fas fa-map-marker-alt" style="color: #48bb78; width: 20px;"></i>
+                        <span>Merkez Mahallesi, Sağlık Caddesi No:123<br>İstanbul, Türkiye</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; color: #cbd5e0;">
+                        <i class="fas fa-phone" style="color: #48bb78; width: 20px;"></i>
+                        <span>+90 (212) 555 0123</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; color: #cbd5e0;">
+                        <i class="fas fa-envelope" style="color: #48bb78; width: 20px;"></i>
+                        <span>info@hastanerandevu.com</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; color: #cbd5e0;">
+                        <i class="fas fa-clock" style="color: #48bb78; width: 20px;"></i>
+                        <span>7/24 Acil Servis<br>Pazartesi-Cuma: 08:00-18:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hizmetler -->
+            <div class="footer-column" style="min-width: 200px; text-align: left;">
+                <h4 style="color: white; font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-stethoscope" style="color: #48bb78; font-size: 1.1rem;"></i>
+                    Hizmetlerimiz
+                </h4>
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                    <li style="margin-bottom: 12px;">
+                        <span style="color: #cbd5e0; display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+                            <i class="fas fa-heart" style="color: #48bb78; width: 16px; font-size: 14px;"></i>
+                            Kardiyoloji
+                        </span>
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <span style="color: #cbd5e0; display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+                            <i class="fas fa-child" style="color: #48bb78; width: 16px; font-size: 14px;"></i>
+                            Çocuk Sağlığı
+                        </span>
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <span style="color: #cbd5e0; display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+                            <i class="fas fa-bone" style="color: #48bb78; width: 16px; font-size: 14px;"></i>
+                            Ortopedi
+                        </span>
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <span style="color: #cbd5e0; display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+                            <i class="fas fa-eye" style="color: #48bb78; width: 16px; font-size: 14px;"></i>
+                            Göz Hastalıkları
+                        </span>
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <span style="color: #cbd5e0; display: flex; align-items: center; gap: 8px; padding: 4px 0;">
+                            <i class="fas fa-user-female" style="color: #48bb78; width: 16px; font-size: 14px;"></i>
+                            Kadın Hastalıkları
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Alt Çizgi -->
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+            <div style="color: #a0aec0; font-size: 0.9rem;">
+                <p style="margin: 0;">© 2024 Hastane Randevu Sistemi. Tüm hakları saklıdır.</p>
+            </div>
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <a href="#" style="color: #a0aec0; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Kullanım Şartları</a>
+                <a href="#" style="color: #a0aec0; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Gizlilik Politikası</a>
+                <a href="#" style="color: #a0aec0; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;">Çerez Politikası</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+/* Footer Hover Effects */
+.footer-column a:hover {
+    color: #48bb78 !important;
+    transform: translateX(5px);
+}
+
+.footer-column a:hover i {
+    color: #68d391 !important;
+    transform: scale(1.1);
+}
+
+.social-links a:hover {
+    background: #48bb78 !important;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+    border-color: #48bb78 !important;
+}
+
+.social-links a:hover i {
+    color: white !important;
+    transform: scale(1.1);
+}
+
+/* Responsive Footer */
+@@media (max-width: 768px) {
+    .modern-footer {
+        padding: 40px 0 20px !important;
+    }
+    
+    .footer-column {
+        min-width: 100% !important;
+        margin-bottom: 30px;
+        text-align: center !important;
+    }
+    
+    .row {
+        grid-template-columns: 1fr !important;
+        gap: 30px !important;
+        justify-items: center !important;
+    }
+    
+    .social-links {
+        justify-content: center !important;
+    }
+    
+    .footer-logo h3 {
+        font-size: 1.5rem !important;
+        text-align: center;
+        justify-content: center;
+    }
+    
+    .footer-logo p {
+        text-align: center !important;
+    }
+    
+    .contact-info {
+        align-items: center;
+    }
+    
+    .contact-info div {
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .footer-column ul {
+        text-align: center;
+    }
+    
+    .footer-column ul li {
+        text-align: center;
+    }
+    
+    .footer-column ul li a {
+        justify-content: center;
+    }
+    
+    .footer-column ul li span {
+        justify-content: center;
+    }
+}
+</style>
+
+ 

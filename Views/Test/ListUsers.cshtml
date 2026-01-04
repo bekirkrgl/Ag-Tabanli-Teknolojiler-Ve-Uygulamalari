@@ -1,0 +1,111 @@
+@{
+    ViewData["Title"] = "Kullanıcı Listesi";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <h2>Kullanıcı Listesi</h2>
+            
+            <h3>Identity Kullanıcıları</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>E-posta</th>
+                        <th>E-posta Onaylı</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in ViewBag.Users)
+                    {
+                        <tr>
+                            <td>@user.Id</td>
+                            <td>@user.Email</td>
+                            <td>@user.EmailConfirmed</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            
+            <h3>Hasta Kayıtları</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ad Soyad</th>
+                        <th>E-posta</th>
+                        <th>Telefon</th>
+                        <th>UserId</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var patient in ViewBag.Patients)
+                    {
+                        <tr>
+                            <td>@patient.Id</td>
+                            <td>@patient.FullName</td>
+                            <td>@patient.Email</td>
+                            <td>@patient.PhoneNumber</td>
+                            <td>@patient.UserId</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            
+            <h3>Doktor Kayıtları</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ad Soyad</th>
+                        <th>E-posta</th>
+                        <th>Telefon</th>
+                        <th>UserId</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var doctor in ViewBag.Doctors)
+                    {
+                        <tr>
+                            <td>@doctor.Id</td>
+                            <td>@doctor.FullName</td>
+                            <td>@doctor.Email</td>
+                            <td>@doctor.PhoneNumber</td>
+                            <td>@doctor.UserId</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            
+            <h3>Debug Bilgisi</h3>
+            <div class="alert alert-info">
+                <h5>👤 Hasta Kullanıcısı:</h5>
+                <strong>Test Kullanıcı:</strong> @(ViewBag.TestUser?.Email ?? "❌ Bulunamadı")<br>
+                <strong>Test Hasta:</strong> @(ViewBag.TestPatient?.Email ?? "❌ Bulunamadı")<br>
+                <strong>UserId Eşleşmesi:</strong> @(ViewBag.UserPatientMatch ? "✅ Eşleşiyor" : "❌ Eşleşmiyor")<br>
+                <strong>Hasta Rolleri:</strong> @(ViewBag.TestUserRoles != null ? string.Join(", ", ViewBag.TestUserRoles) : "❌ Rol bulunamadı")<br>
+                @if (ViewBag.TestUser != null && ViewBag.TestPatient != null)
+                {
+                    <strong>User ID:</strong> @ViewBag.TestUser.Id<br>
+                    <strong>Patient UserId:</strong> @ViewBag.TestPatient.UserId<br>
+                }
+                
+                <hr>
+                
+                <h5>👨‍⚕️ Doktor Kullanıcısı:</h5>
+                <strong>Test Doktor Kullanıcı:</strong> @(ViewBag.TestDoctorUser?.Email ?? "❌ Bulunamadı")<br>
+                <strong>Test Doktor:</strong> @(ViewBag.TestDoctor?.Email ?? "❌ Bulunamadı")<br>
+                <strong>UserId Eşleşmesi:</strong> @(ViewBag.UserDoctorMatch ? "✅ Eşleşiyor" : "❌ Eşleşmiyor")<br>
+                <strong>Doktor Rolleri:</strong> @(ViewBag.TestDoctorUserRoles != null ? string.Join(", ", ViewBag.TestDoctorUserRoles) : "❌ Rol bulunamadı")<br>
+                @if (ViewBag.TestDoctorUser != null && ViewBag.TestDoctor != null)
+                {
+                    <strong>User ID:</strong> @ViewBag.TestDoctorUser.Id<br>
+                    <strong>Doctor UserId:</strong> @ViewBag.TestDoctor.UserId<br>
+                }
+            </div>
+            
+            <a href="/Test/CreateTestUser" class="btn btn-primary">Test Kullanıcı Oluştur</a>
+        </div>
+    </div>
+</div>

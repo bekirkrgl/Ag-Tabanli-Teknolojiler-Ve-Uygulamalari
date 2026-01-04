@@ -1,0 +1,913 @@
+@model IEnumerable<HastaneRandevuSistemi.Models.Appointment>
+@using HastaneRandevuSistemi.Models
+
+@{
+    ViewData["Title"] = "Doktor Paneli";
+    var doctor = ViewBag.Doctor as HastaneRandevuSistemi.Models.Doctor;
+    var totalAppointments = Model?.Count() ?? 0;
+    var confirmedAppointments = Model?.Count(a => a.Status == AppointmentStatus.Confirmed) ?? 0;
+    var pendingAppointments = Model?.Count(a => a.Status == AppointmentStatus.Scheduled) ?? 0;
+    var todayAppointments = Model?.Count(a => a.AppointmentDate.Date == DateTime.Today) ?? 0;
+    var completedAppointments = Model?.Count(a => a.Status == AppointmentStatus.Completed) ?? 0;
+    var upcomingAppointments = Model?.Where(a => a.AppointmentDate.Date >= DateTime.Today && a.Status == AppointmentStatus.Confirmed).Take(5).ToList() ?? new List<Appointment>();
+}
+
+<style>
+/* Modern Doktor Panel CSS */
+:root {
+    --primary-color: #3b82f6;
+    --primary-dark: #1e40af;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --info-color: #06b6d4;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+}
+
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.main-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Header Section */
+.doctor-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.doctor-info {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.doctor-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+    flex-shrink: 0;
+}
+
+.doctor-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.doctor-details h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--gray-800);
+    margin: 0 0 0.5rem 0;
+}
+
+.doctor-specialization {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.doctor-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: var(--success-color);
+    color: white;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card a:hover,
+a.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    opacity: 0.95;
+}
+
+.stat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stat-icon.primary { background: var(--primary-color); }
+.stat-icon.success { background: var(--success-color); }
+.stat-icon.warning { background: var(--warning-color); }
+.stat-icon.info { background: var(--info-color); }
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--gray-800);
+    line-height: 1;
+}
+
+.stat-label {
+    color: var(--gray-600);
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Quick Actions */
+.quick-actions {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.quick-actions h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.action-btn.primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.action-btn.secondary {
+    background: var(--gray-100);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-200);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.action-btn.primary:hover {
+    background: var(--primary-dark);
+}
+
+.action-btn.secondary:hover {
+    background: var(--gray-200);
+}
+
+/* Appointments Section */
+.appointments-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--gray-100);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.appointment-card {
+    background: var(--gray-50);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--gray-200);
+    transition: all 0.3s ease;
+}
+
+.appointment-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.appointment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.appointment-date {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+.appointment-time {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+.appointment-status {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-scheduled { background: #fef3c7; color: #92400e; }
+.status-confirmed { background: #d1fae5; color: #065f46; }
+.status-completed { background: #dbeafe; color: #1e40af; }
+.status-cancelled { background: #fee2e2; color: #991b1b; }
+
+.patient-info {
+    margin-bottom: 1rem;
+}
+
+.patient-name {
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 0.5rem;
+}
+
+.patient-contact {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.appointment-notes {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--gray-200);
+}
+
+.notes-title {
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.appointment-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-success {
+    background: var(--success-color);
+    color: white;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-secondary {
+    background: var(--gray-200);
+    color: var(--gray-700);
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Appointment Filters */
+.appointment-filters {
+    background: var(--gray-50);
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid var(--gray-200);
+}
+
+.appointment-filters .btn-group .btn {
+    border-radius: 8px;
+    margin-right: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.appointment-filters .btn-group .btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.appointment-filters .btn-group .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--gray-600);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: var(--gray-400);
+    margin-bottom: 1rem;
+}
+
+/* Responsive */
+@@media (max-width: 768px) {
+    .main-container {
+        padding: 1rem;
+    }
+    
+    .doctor-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .doctor-details h1 {
+        font-size: 2rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .appointment-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .appointment-actions {
+        justify-content: center;
+    }
+}
+</style>
+
+<div class="main-container">
+    <!-- Success/Error Messages -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        var successMessage = TempData["SuccessMessage"]?.ToString() ?? "";
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="background: var(--success-color); color: white; border: none; border-radius: 12px; margin-bottom: 1.5rem; padding: 1rem 1.5rem; font-size: 1rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1050; position: relative;">
+            <i class="fas fa-check-circle me-2"></i>
+            <strong>@successMessage</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close" style="filter: invert(1); opacity: 0.8;"></button>
+        </div>
+        <script>
+            console.log('Success mesajı gösteriliyor: @successMessage');
+            // Mesajı 5 saniye sonra otomatik kapat
+            setTimeout(function() {
+                var alertElement = document.querySelector('.alert-success');
+                if (alertElement) {
+                    var bsAlert = new bootstrap.Alert(alertElement);
+                    bsAlert.close();
+                }
+            }, 5000);
+        </script>
+    }
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        var errorMessage = TempData["ErrorMessage"]?.ToString() ?? "";
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="background: var(--danger-color); color: white; border: none; border-radius: 12px; margin-bottom: 1.5rem; padding: 1rem 1.5rem; font-size: 1rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1050; position: relative;">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <strong>@errorMessage</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close" style="filter: invert(1); opacity: 0.8;"></button>
+        </div>
+        <script>
+            console.log('Error mesajı gösteriliyor: @errorMessage');
+            // Mesajı 5 saniye sonra otomatik kapat
+            setTimeout(function() {
+                var alertElement = document.querySelector('.alert-danger');
+                if (alertElement) {
+                    var bsAlert = new bootstrap.Alert(alertElement);
+                    bsAlert.close();
+                }
+            }, 5000);
+        </script>
+    }
+
+    <!-- Doctor Header -->
+    <div class="doctor-header">
+        <div class="doctor-info">
+            <div class="doctor-avatar">
+                @if (!string.IsNullOrEmpty(doctor?.PhotoUrl))
+                {
+                    <img src="@doctor.PhotoUrl" alt="Dr. @doctor.FullName" />
+                }
+                else
+                {
+                    <i class="fas fa-user-md"></i>
+                }
+            </div>
+            <div class="doctor-details">
+                <h1>Dr. @doctor?.FullName</h1>
+                <div class="doctor-specialization">
+                    <i class="fas fa-stethoscope"></i>
+                    @doctor?.Specialization?.Name
+                </div>
+                <span class="doctor-status">
+                    <i class="fas fa-circle"></i>
+                    @(doctor?.IsActive == true ? "Aktif" : "Pasif")
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+        <a asp-controller="Appointment" asp-action="Index" class="stat-card" style="text-decoration: none; color: inherit; cursor: pointer;" title="Hastaların Randevularını Görüntüle">
+            <div class="stat-header">
+                <div class="stat-icon primary">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+            </div>
+            <div class="stat-number">@totalAppointments</div>
+            <div class="stat-label">Toplam Randevu</div>
+        </a>
+        
+        <a asp-controller="Appointment" asp-action="Index" class="stat-card" style="text-decoration: none; color: inherit; cursor: pointer;" title="Hastaların Randevularını Görüntüle">
+            <div class="stat-header">
+                <div class="stat-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+            <div class="stat-number">@confirmedAppointments</div>
+            <div class="stat-label">Onaylanan</div>
+        </a>
+        
+        <a asp-controller="Appointment" asp-action="Index" class="stat-card" style="text-decoration: none; color: inherit; cursor: pointer;" title="Hastaların Randevularını Görüntüle">
+            <div class="stat-header">
+                <div class="stat-icon warning">
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>
+            <div class="stat-number">@pendingAppointments</div>
+            <div class="stat-label">Beklemede</div>
+        </a>
+        
+        <a asp-controller="Appointment" asp-action="Index" class="stat-card" style="text-decoration: none; color: inherit; cursor: pointer;" title="Hastaların Randevularını Görüntüle">
+            <div class="stat-header">
+                <div class="stat-icon info">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+            </div>
+            <div class="stat-number">@todayAppointments</div>
+            <div class="stat-label">Bugünkü</div>
+        </a>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <h3>
+            <i class="fas fa-bolt"></i>
+            Hızlı İşlemler
+        </h3>
+        <div class="actions-grid">
+            <a asp-controller="AvailabilityBlock" asp-action="Create" class="action-btn primary">
+                <i class="fas fa-plus"></i>
+                Müsaitlik Ekle
+            </a>
+            <a asp-controller="AvailabilityBlock" asp-action="Index" class="action-btn secondary">
+                <i class="fas fa-calendar-times"></i>
+                Müsaitlik Yönetimi
+            </a>
+            <a asp-controller="WorkingHour" asp-action="Index" class="action-btn secondary">
+                <i class="fas fa-clock"></i>
+                Çalışma Saatleri
+            </a>
+            <a asp-controller="Doctor" asp-action="Edit" asp-route-id="@doctor?.Id" class="action-btn secondary">
+                <i class="fas fa-user-edit"></i>
+                Profil Düzenle
+            </a>
+        </div>
+    </div>
+
+    <!-- Appointments -->
+    <div class="appointments-section">
+        <div class="section-header">
+            <h3 class="section-title">
+                <i class="fas fa-calendar-alt"></i>
+                Randevularım
+            </h3>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted">@totalAppointments randevu</span>
+                <a asp-controller="Doctor" asp-action="Appointments" asp-route-id="@doctor?.Id" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-list"></i>
+                    Tümünü Gör
+                </a>
+            </div>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <!-- Appointment Filters -->
+            <div class="appointment-filters mb-3">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-sm btn-outline-primary active" data-filter="all">
+                        Tümü (@totalAppointments)
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-warning" data-filter="scheduled">
+                        Beklemede (@pendingAppointments)
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-success" data-filter="confirmed">
+                        Onaylanan (@confirmedAppointments)
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-info" data-filter="completed">
+                        Tamamlanan (@completedAppointments)
+                    </button>
+                </div>
+            </div>
+
+            @foreach (var appointment in Model.OrderBy(a => a.AppointmentDate).Take(10))
+            {
+                <div class="appointment-card" data-status="@appointment.Status.ToString().ToLower()">
+                    <div class="appointment-header">
+                        <div>
+                            <div class="appointment-date">@appointment.AppointmentDate.ToString("dd MMMM yyyy")</div>
+                            <div class="appointment-time">
+                                <i class="fas fa-clock"></i>
+                                @appointment.AppointmentTime.ToString(@"hh\:mm")
+                            </div>
+                        </div>
+                        <span class="appointment-status @(appointment.Status switch {
+                            AppointmentStatus.Scheduled => "status-scheduled",
+                            AppointmentStatus.Confirmed => "status-confirmed", 
+                            AppointmentStatus.Completed => "status-completed",
+                            AppointmentStatus.Cancelled => "status-cancelled",
+                            _ => "status-scheduled"
+                        })">
+                            @(appointment.Status switch {
+                                AppointmentStatus.Scheduled => "Beklemede",
+                                AppointmentStatus.Confirmed => "Onaylandı",
+                                AppointmentStatus.Completed => "Tamamlandı",
+                                AppointmentStatus.Cancelled => "İptal Edildi",
+                                _ => "Bilinmiyor"
+                            })
+                        </span>
+                    </div>
+                    
+                    <div class="patient-info">
+                        <div class="patient-name">
+                            <i class="fas fa-user"></i>
+                            @appointment.Patient?.FullName
+                        </div>
+                        <div class="patient-contact">
+                            <i class="fas fa-envelope"></i>
+                            @appointment.Patient?.Email
+                        </div>
+                        <div class="patient-contact">
+                            <i class="fas fa-phone"></i>
+                            @appointment.Patient?.PhoneNumber
+                        </div>
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(appointment.Notes))
+                    {
+                        <div class="appointment-notes">
+                            <div class="notes-title">
+                                <i class="fas fa-sticky-note"></i>
+                                Notlar
+                            </div>
+                            <p>@appointment.Notes</p>
+                        </div>
+                    }
+                    
+                    <div class="appointment-actions">
+                        @if (appointment.Status == AppointmentStatus.Scheduled)
+                        {
+                            <form asp-controller="Doctor" asp-action="ConfirmAppointment" asp-route-id="@appointment.Id" method="post" class="d-inline confirm-form" id="confirmForm_@appointment.Id">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@appointment.Id" />
+                                <button type="button" class="btn btn-success" onclick="submitConfirmForm(@appointment.Id, 'Bu randevuyu onaylamak istediğinizden emin misiniz?');">
+                                    <i class="fas fa-check"></i> Onayla
+                                </button>
+                            </form>
+                            <form asp-controller="Doctor" asp-action="CancelAppointment" asp-route-id="@appointment.Id" method="post" class="d-inline cancel-form" id="cancelForm_@appointment.Id">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@appointment.Id" />
+                                <button type="button" class="btn btn-danger" onclick="submitCancelForm(@appointment.Id, 'Bu randevuyu iptal etmek istediğinizden emin misiniz?');">
+                                    <i class="fas fa-times"></i> İptal Et
+                                </button>
+                            </form>
+                        }
+                        else if (appointment.Status == AppointmentStatus.Confirmed)
+                        {
+                            <form asp-controller="Doctor" asp-action="CompleteAppointment" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@appointment.Id" />
+                                <button type="submit" class="btn btn-primary"
+                                        onclick="return confirm('Bu randevuyu tamamlandı olarak işaretlemek istediğinizden emin misiniz?')">
+                                    <i class="fas fa-check-double"></i> Tamamla
+                                </button>
+                            </form>
+                        }
+                        <a asp-controller="Appointment" asp-action="Details" asp-route-id="@appointment.Id" class="btn btn-secondary">
+                            <i class="fas fa-eye"></i> Detay
+                        </a>
+                    </div>
+                </div>
+            }
+            
+            @if (Model.Count() > 10)
+            {
+                <div class="text-center mt-3">
+                    <a asp-controller="Doctor" asp-action="Appointments" asp-route-id="@doctor?.Id" class="btn btn-primary">
+                        <i class="fas fa-list"></i>
+                        Tüm Randevuları Görüntüle
+                    </a>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h4>Henüz randevu bulunmamaktadır</h4>
+                <p>Hastalar sizin için randevu talep ettiğinde burada görünecektir.</p>
+                <a asp-controller="AvailabilityBlock" asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Müsaitlik Ekle
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Smooth animations
+    const cards = document.querySelectorAll('.stat-card, .appointment-card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+
+    // Appointment filtering
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const appointmentCards = document.querySelectorAll('.appointment-card');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Filter appointments
+            appointmentCards.forEach(card => {
+                const status = card.getAttribute('data-status');
+                
+                if (filter === 'all' || status === filter) {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeIn 0.3s ease';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Auto-hide alerts after 5 seconds
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            if (alert && alert.parentNode) {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.remove();
+                    }
+                }, 500);
+            }
+        }, 5000);
+    });
+
+});
+
+// Onayla form submit fonksiyonu (AJAX ile)
+function submitConfirmForm(appointmentId, message) {
+    console.log('=== ONAYLA FORM ===');
+    console.log('Appointment ID:', appointmentId);
+    
+    if (confirm(message)) {
+        console.log('Onaylandı, AJAX ile gönderiliyor...');
+        const form = document.getElementById('confirmForm_' + appointmentId);
+        if (!form) {
+            console.error('Form bulunamadı: confirmForm_' + appointmentId);
+            return;
+        }
+        
+        // AntiForgeryToken'ı al
+        const token = form.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        if (!token) {
+            console.error('AntiForgeryToken bulunamadı!');
+            alert('Güvenlik hatası. Lütfen sayfayı yenileyin.');
+            return;
+        }
+        
+        // AJAX ile POST isteği gönder
+        const formData = new FormData(form);
+        fetch('/Doctor/ConfirmAppointment/' + appointmentId, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (response.ok || response.redirected) {
+                // Başarılı, sayfayı yenile
+                window.location.reload();
+            } else {
+                alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+            }
+        })
+        .catch(error => {
+            console.error('AJAX hatası:', error);
+            alert('Bir hata oluştu: ' + error.message);
+        });
+    } else {
+        console.log('Onayla işlemi iptal edildi');
+    }
+}
+
+// İptal Et form submit fonksiyonu (AJAX ile)
+function submitCancelForm(appointmentId, message) {
+    console.log('=== İPTAL ET FORM ===');
+    console.log('Appointment ID:', appointmentId);
+    
+    if (confirm(message)) {
+        console.log('İptal onaylandı, AJAX ile gönderiliyor...');
+        const form = document.getElementById('cancelForm_' + appointmentId);
+        if (!form) {
+            console.error('Form bulunamadı: cancelForm_' + appointmentId);
+            return;
+        }
+        
+        // AntiForgeryToken'ı al
+        const token = form.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        if (!token) {
+            console.error('AntiForgeryToken bulunamadı!');
+            alert('Güvenlik hatası. Lütfen sayfayı yenileyin.');
+            return;
+        }
+        
+        // AJAX ile POST isteği gönder
+        const formData = new FormData(form);
+        fetch('/Doctor/CancelAppointment/' + appointmentId, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (response.ok || response.redirected) {
+                // Başarılı, sayfayı yenile
+                window.location.reload();
+            } else {
+                alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+            }
+        })
+        .catch(error => {
+            console.error('AJAX hatası:', error);
+            alert('Bir hata oluştu: ' + error.message);
+        });
+    } else {
+        console.log('İptal işlemi iptal edildi');
+    }
+}
+</script>

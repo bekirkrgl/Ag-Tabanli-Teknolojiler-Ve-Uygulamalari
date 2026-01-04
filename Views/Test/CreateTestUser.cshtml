@@ -1,0 +1,69 @@
+@{
+    ViewData["Title"] = "Test Kullanıcı Oluştur";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">Test Kullanıcı Oluştur</h3>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+                    
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i>
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(ViewBag.Message))
+                    {
+                        <div class="alert alert-info">
+                            @ViewBag.Message
+                        </div>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(ViewBag.Email))
+                    {
+                        <div class="alert alert-success">
+                            <h5>Test Kullanıcı Bilgileri:</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>👤 Hasta:</h6>
+                                    <p><strong>E-posta:</strong> @ViewBag.Email</p>
+                                    <p><strong>Şifre:</strong> @ViewBag.Password</p>
+                                    <a href="/Identity/Account/Login?role=Patient" class="btn btn-success btn-sm">
+                                        Hasta Girişi Yap
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>👨‍⚕️ Doktor:</h6>
+                                    <p><strong>E-posta:</strong> @ViewBag.DoctorEmail</p>
+                                    <p><strong>Şifre:</strong> @ViewBag.DoctorPassword</p>
+                                    <a href="/Identity/Account/Login?role=Doctor" class="btn btn-primary btn-sm">
+                                        Doktor Girişi Yap
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    
+                    <a href="/Test/CreateTestUser" class="btn btn-primary">Test Kullanıcı Oluştur</a>
+                    <a href="/Test/QuickTest" class="btn btn-success">🚀 HIZLI TEST (Temizle ve Oluştur)</a>
+                    <a href="/Test/ResetUsers" class="btn btn-warning">🔄 KULLANICILARI YENİDEN OLUŞTUR</a>
+                    <a href="/Test/ListUsers" class="btn btn-info">Kullanıcıları Listele</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,112 @@
+@model IEnumerable<HastaneRandevuSistemi.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Doktor Randevuları";
+    var doctor = ViewBag.Doctor as HastaneRandevuSistemi.Models.Doctor;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-calendar text-primary"></i> @doctor?.FullName - Randevular</h2>
+    <a asp-controller="Appointment" asp-action="Create" asp-route-doctorId="@doctor?.Id" class="btn btn-success">
+        <i class="fas fa-plus"></i> Yeni Randevu
+    </a>
+</div>
+
+@if (Model.Any())
+{
+    <div class="card">
+        <div class="card-header">
+            <h5><i class="fas fa-list"></i> Randevu Listesi</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Hasta</th>
+                            <th>Tarih</th>
+                            <th>Saat</th>
+                            <th>Durum</th>
+                            <th>Notlar</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var appointment in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@appointment.Patient?.FullName</strong><br>
+                                    <small class="text-muted">@appointment.Patient?.Email</small>
+                                </td>
+                                <td>@appointment.AppointmentDate.ToString("dd.MM.yyyy")</td>
+                                <td>@appointment.AppointmentTime.ToString(@"hh\:mm")</td>
+                                <td>
+                                    @switch (appointment.Status)
+                                    {
+                                        case HastaneRandevuSistemi.Models.AppointmentStatus.Scheduled:
+                                            <span class="badge bg-warning">Planlandı</span>
+                                            break;
+                                        case HastaneRandevuSistemi.Models.AppointmentStatus.Confirmed:
+                                            <span class="badge bg-info">Onaylandı</span>
+                                            break;
+                                        case HastaneRandevuSistemi.Models.AppointmentStatus.Completed:
+                                            <span class="badge bg-success">Tamamlandı</span>
+                                            break;
+                                        case HastaneRandevuSistemi.Models.AppointmentStatus.Cancelled:
+                                            <span class="badge bg-danger">İptal Edildi</span>
+                                            break;
+                                        case HastaneRandevuSistemi.Models.AppointmentStatus.NoShow:
+                                            <span class="badge bg-secondary">Gelmedi</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(appointment.Notes))
+                                    {
+                                        <span title="@appointment.Notes">
+                                            @(appointment.Notes.Length > 30 ? appointment.Notes.Substring(0, 30) + "..." : appointment.Notes)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-controller="Appointment" asp-action="Details" asp-route-id="@appointment.Id" 
+                                           class="btn btn-outline-primary" title="Detaylar">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-controller="Appointment" asp-action="Edit" asp-route-id="@appointment.Id" 
+                                           class="btn btn-outline-warning" title="Düzenle">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info text-center">
+        <i class="fas fa-calendar-times fa-2x mb-3"></i>
+        <h4>Henüz randevu bulunmamaktadır</h4>
+        <p>Bu doktor için henüz randevu kaydı bulunmamaktadır.</p>
+        <a asp-controller="Appointment" asp-action="Create" asp-route-doctorId="@doctor?.Id" class="btn btn-primary">
+            <i class="fas fa-plus"></i> İlk Randevuyu Oluştur
+        </a>
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-action="Details" asp-route-id="@doctor?.Id" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Doktor Detaylarına Dön
+    </a>
+</div>
