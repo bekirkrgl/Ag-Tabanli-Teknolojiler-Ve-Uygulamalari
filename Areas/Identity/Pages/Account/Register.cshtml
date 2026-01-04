@@ -1,0 +1,258 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Kayıt Ol";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<style>
+    .register-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    
+    .register-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        overflow: hidden;
+        max-width: 500px;
+        width: 100%;
+    }
+    
+    .register-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+    
+    .register-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 24px;
+    }
+    
+    .register-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    
+    .register-subtitle {
+        font-size: 14px;
+        opacity: 0.9;
+    }
+    
+    .register-body {
+        padding: 30px;
+    }
+    
+    .role-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .role-btn {
+        padding: 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        background: white;
+        text-decoration: none;
+        color: #333;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .role-btn:hover {
+        border-color: #667eea;
+        background: #f8f9ff;
+        text-decoration: none;
+        color: #333;
+    }
+    
+    .role-btn.active {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .role-icon {
+        font-size: 24px;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .role-name {
+        font-weight: 600;
+        font-size: 14px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 12px 15px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+    
+    .register-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 16px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .register-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+    
+    .login-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .login-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+    }
+    
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-header">
+            <div class="register-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <h2 class="register-title">Hesap Oluştur</h2>
+            <p class="register-subtitle">Yeni hesap oluşturmak için rolünüzü seçin</p>
+        </div>
+        <div class="register-body">
+            <div class="role-buttons">
+                <a href="?role=Patient" class="role-btn" id="patientRole">
+                    <i class="fas fa-user role-icon"></i>
+                    <span class="role-name">Hasta</span>
+                </a>
+                <a href="?role=Doctor" class="role-btn" id="doctorRole">
+                    <i class="fas fa-user-md role-icon"></i>
+                    <span class="role-name">Doktor</span>
+                </a>
+            </div>
+            
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                <input type="hidden" name="role" value="Patient" id="selectedRole" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                
+                <div class="form-group">
+                    <label class="form-label">E-posta Adresi</label>
+                    <input name="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="ornek@email.com" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Şifre</label>
+                    <input name="Input.Password" type="password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Güçlü bir şifre giriniz" />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Şifre Tekrar</label>
+                    <input name="Input.ConfirmPassword" type="password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="Şifrenizi tekrar giriniz" />
+                </div>
+                
+                <button type="submit" class="register-btn">
+                    <i class="fas fa-user-plus me-2"></i>Hesap Oluştur
+                </button>
+            </form>
+            
+            <div class="login-link">
+                <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">
+                    <i class="fas fa-sign-in-alt me-1"></i>Zaten hesabınız var mı? Giriş yapın
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const patientRole = document.getElementById('patientRole');
+        const doctorRole = document.getElementById('doctorRole');
+        const selectedRole = document.getElementById('selectedRole');
+        const registerBtn = document.querySelector('.register-btn');
+        
+        // URL'den rol parametresini al
+        const urlParams = new URLSearchParams(window.location.search);
+        const role = urlParams.get('role');
+        
+        if (role === 'Patient') {
+            patientRole.classList.add('active');
+            selectedRole.value = 'Patient';
+            registerBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i>Hasta Olarak Kayıt Ol';
+        } else if (role === 'Doctor') {
+            doctorRole.classList.add('active');
+            selectedRole.value = 'Doctor';
+            registerBtn.innerHTML = '<i class="fas fa-user-md me-2"></i>Doktor Olarak Kayıt Ol';
+        }
+        
+        patientRole.addEventListener('click', function(e) {
+            e.preventDefault();
+            patientRole.classList.add('active');
+            doctorRole.classList.remove('active');
+            selectedRole.value = 'Patient';
+            registerBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i>Hasta Olarak Kayıt Ol';
+        });
+        
+        doctorRole.addEventListener('click', function(e) {
+            e.preventDefault();
+            doctorRole.classList.add('active');
+            patientRole.classList.remove('active');
+            selectedRole.value = 'Doctor';
+            registerBtn.innerHTML = '<i class="fas fa-user-md me-2"></i>Doktor Olarak Kayıt Ol';
+        });
+    });
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

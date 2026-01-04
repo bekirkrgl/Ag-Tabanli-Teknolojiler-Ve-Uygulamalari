@@ -1,0 +1,38 @@
+﻿@page
+@model LogoutModel
+@{
+    ViewData["Title"] = "Çıkış Yap";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow">
+                <div class="card-header bg-warning text-white text-center">
+                    <h4 class="mb-0"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</h4>
+                </div>
+                <div class="card-body text-center">
+                    @{
+                        if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <p class="mb-4">Hesabınızdan çıkış yapmak istediğinizden emin misiniz?</p>
+                            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                                <button type="submit" class="btn btn-warning btn-lg">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Evet, Çıkış Yap
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <p class="mb-4">Başarıyla çıkış yaptınız.</p>
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+                                <i class="fas fa-home me-2"></i>Ana Sayfaya Dön
+                            </a>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

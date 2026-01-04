@@ -1,0 +1,208 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Giriş Yap";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+    
+    // URL'den rol parametresini al - güvenli şekilde
+    string role = "";
+    if (Request.Query.ContainsKey("role"))
+    {
+        role = Request.Query["role"].ToString();
+    }
+    else if (ViewData.ContainsKey("Role"))
+    {
+        role = ViewData["Role"]?.ToString() ?? "";
+    }
+    
+    var isPatient = role.Equals("Patient", StringComparison.OrdinalIgnoreCase);
+    var isDoctor = role.Equals("Doctor", StringComparison.OrdinalIgnoreCase);
+}
+
+<style>
+    .login-container {
+        min-height: 100vh;
+        background: @(isPatient ? "linear-gradient(135deg, #48bb78 0%, #68d391 100%)" : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)");
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    
+    .login-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        overflow: hidden;
+        max-width: 350px;
+        width: 100%;
+    }
+    
+    .login-header {
+        background: @(isPatient ? "linear-gradient(135deg, #48bb78 0%, #68d391 100%)" : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)");
+        color: white;
+        padding: 25px;
+        text-align: center;
+    }
+    
+    .login-icon {
+        width: 50px;
+        height: 50px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 10px;
+        font-size: 20px;
+    }
+    
+    .login-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .login-subtitle {
+        font-size: 12px;
+        opacity: 0.9;
+    }
+    
+    .login-body {
+        padding: 25px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 5px;
+        display: block;
+        font-size: 14px;
+    }
+    
+    .form-control {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .form-control:focus {
+        border-color: @(isPatient ? "#48bb78" : "#667eea");
+        box-shadow: 0 0 0 2px rgba(@(isPatient ? "72, 187, 120" : "102, 126, 234"), 0.1);
+        outline: none;
+    }
+    
+    .login-btn {
+        background: @(isPatient ? "linear-gradient(135deg, #48bb78 0%, #68d391 100%)" : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)");
+        border: none;
+        color: white;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 14px;
+        width: 100%;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .login-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(@(isPatient ? "72, 187, 120" : "102, 126, 234"), 0.3);
+    }
+    
+    .login-links {
+        text-align: center;
+        margin-top: 15px;
+    }
+    
+    .login-links a {
+        color: @(isPatient ? "#48bb78" : "#667eea");
+        text-decoration: none;
+        font-weight: 400;
+        font-size: 13px;
+    }
+    
+    .login-links a:hover {
+        text-decoration: underline;
+    }
+    
+</style>
+
+<div class="login-container">
+    <div class="login-card">
+        @if (string.IsNullOrEmpty(role))
+        {
+            <!-- Rol Seçimi -->
+            <div class="login-header">
+                <div class="login-icon">
+                    <i class="fas fa-hospital"></i>
+                </div>
+                <h2 class="login-title">Hastane Randevu Sistemi</h2>
+                <p class="login-subtitle">Giriş yapmak için rolünüzü seçin</p>
+            </div>
+            <div class="login-body">
+                <div class="d-grid gap-3">
+                    <a href="?role=Patient" class="btn btn-success btn-lg" style="background: linear-gradient(135deg, #48bb78 0%, #68d391 100%); border: none; padding: 20px; border-radius: 15px;">
+                        <i class="fas fa-user me-2"></i>
+                        Hasta Girişi
+                    </a>
+                    <a href="?role=Doctor" class="btn btn-primary btn-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; padding: 20px; border-radius: 15px;">
+                        <i class="fas fa-user-md me-2"></i>
+                        Doktor Girişi
+                    </a>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Giriş Formu -->
+            <div class="login-header">
+                <div class="login-icon">
+                    <i class="fas @(isPatient ? "fa-user" : "fa-user-md")"></i>
+                </div>
+                <h2 class="login-title">@(isPatient ? "Hasta Girişi" : "Doktor Girişi")</h2>
+                <p class="login-subtitle">@(isPatient ? "Randevu almak için giriş yapın" : "Randevuları yönetmek için giriş yapın")</p>
+            </div>
+            <div class="login-body">
+                <form id="account" method="post">
+                    <input type="hidden" name="role" value="@role" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    
+                    <div class="form-group">
+                        <label asp-for="Input.Email" class="form-label">E-posta</label>
+                        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="ornek@email.com" value="@(isPatient ? "hasta@test.com" : "doktor@test.com")" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label asp-for="Input.Password" class="form-label">Şifre</label>
+                        <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="Şifrenizi giriniz" value="@(isPatient ? "Hasta123!" : "Doktor123!")" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+                    
+                    <button id="login-submit" type="submit" class="login-btn">
+                        <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                    </button>
+                    
+                    <div class="login-links">
+                        <div class="mb-2">
+                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Hesap oluştur</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
